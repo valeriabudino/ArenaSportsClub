@@ -12,4 +12,10 @@ Route::view('profile', 'profile')
     ->middleware(['auth'])
     ->name('profile');
 
+Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->group(function () {
+    Route::get('dashboard', function () {
+        return view('pages.admin.dashboard');
+    })->name('admin.dashboard');
+});
+
 require __DIR__.'/auth.php';
