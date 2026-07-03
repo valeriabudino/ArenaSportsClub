@@ -3,7 +3,12 @@
 use Illuminate\Support\Facades\Route;
 use Livewire\Volt\Volt;
 
-Route::view('/', 'welcome');
+Route::view('/', 'pages.home')->name('home');
+Route::view('/canchas', 'pages.courts')->name('courts.index');
+Route::view('/reservas', 'pages.reservations')->name('reservations.index');
+Route::view('/torneos', 'pages.tournaments')->name('tournaments.index');
+Route::view('/nosotros', 'pages.about')->name('about');
+Route::view('/contacto', 'pages.contact')->name('contact');
 
 Route::view('dashboard', 'dashboard')
     ->middleware(['auth', 'verified'])
