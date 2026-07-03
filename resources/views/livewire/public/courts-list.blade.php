@@ -6,6 +6,7 @@ use Livewire\Volt\Component;
 
 new class extends Component {
     public $selectedSport = '';
+    public $selectedDate = '';
 
     public function with(): array
     {
@@ -14,6 +15,7 @@ new class extends Component {
             'courts' => Court::with('sport')
                 ->where('is_active', true)
                 ->when($this->selectedSport, fn($q) => $q->where('sport_id', $this->selectedSport))
+                ->when($this->selectedDate, fn($q) => $q->whereHas('turns', fn($t) => $t->where('date', $this->selectedDate)->where('status', 'available')))
                 ->get(),
         ];
     }
@@ -32,6 +34,11 @@ new class extends Component {
                 {{ $sport->name }}
             </button>
         @endforeach
+    </div>
+
+    <!-- Filtro por fecha -->
+    <div class="flex justify-center mb-12">
+        <input type="date" wire:model.live="selectedDate" class="px-4 py-2 rounded bg-white/10 text-white border border-lime-400">
     </div>
 
     <!-- Grilla de canchas -->
