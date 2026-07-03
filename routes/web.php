@@ -11,14 +11,14 @@ Route::view('/nosotros', 'pages.about')->name('about');
 Route::view('/contacto', 'pages.contact')->name('contact');
 
 Route::view('dashboard', 'dashboard')
-    ->middleware(['auth', 'verified'])
+    ->middleware(['auth'])
     ->name('dashboard');
 
 Route::view('profile', 'profile')
     ->middleware(['auth'])
     ->name('profile');
 
-Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->group(function () {
+Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
     Route::get('dashboard', function () {
         return view('pages.admin.dashboard');
     })->name('admin.dashboard');
