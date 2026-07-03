@@ -5,9 +5,6 @@ use Livewire\Volt\Component;
 
 new class extends Component
 {
-    /**
-     * Log the current user out of the application.
-     */
     public function logout(Logout $logout): void
     {
         $logout();
@@ -42,6 +39,9 @@ new class extends Component
                         </x-nav-link>
                         <x-nav-link :href="route('admin.courts')" :active="request()->routeIs('admin.courts')" wire:navigate>
                             {{ __('Canchas') }}
+                        </x-nav-link>
+                        <x-nav-link :href="route('admin.turns.index')" :active="request()->routeIs('admin.turns.index')" wire:navigate>
+                            {{ __('Turnos') }}
                         </x-nav-link>
                     @endif
                 </div>
@@ -104,6 +104,9 @@ new class extends Component
                 </x-responsive-nav-link>
                 <x-responsive-nav-link :href="route('admin.courts')" :active="request()->routeIs('admin.courts')" wire:navigate>
                     {{ __('Canchas') }}
+                </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('admin.turns.index')" :active="request()->routeIs('admin.turns.index')" wire:navigate>
+                    {{ __('Turnos') }}
                 </x-responsive-nav-link>
             @endif
         </div>

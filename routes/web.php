@@ -25,6 +25,7 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->group(functio
 
     Volt::route('sports', 'admin.sports.index')->name('admin.sports');
     Volt::route('courts', 'admin.courts.index')->name('admin.courts');
+    Volt::route('turns', 'admin.turns.index')->name('admin.turns.index');
 });
 
 require __DIR__.'/auth.php';
