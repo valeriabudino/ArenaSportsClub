@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Livewire\Volt\Volt;
 
 Route::view('/', 'pages.home')->name('home');
 Route::view('/canchas', 'pages.courts')->name('courts.index');
@@ -21,6 +22,9 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->group(functio
     Route::get('dashboard', function () {
         return view('pages.admin.dashboard');
     })->name('admin.dashboard');
+
+    Volt::route('sports', 'admin.sports.index')->name('admin.sports');
+    Volt::route('courts', 'admin.courts.index')->name('admin.courts');
 });
 
 require __DIR__.'/auth.php';
