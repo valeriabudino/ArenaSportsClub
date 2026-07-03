@@ -10,4 +10,6 @@
 
 <x-public.courts />
 
+<x-public.footer />
+
 @endsection
