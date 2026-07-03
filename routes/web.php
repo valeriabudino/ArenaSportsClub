@@ -22,7 +22,6 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->group(functio
     Route::get('dashboard', function () {
         return view('pages.admin.dashboard');
     })->name('admin.dashboard');
-
     Volt::route('sports', 'admin.sports.index')->name('admin.sports');
     Volt::route('courts', 'admin.courts.index')->name('admin.courts');
 });
