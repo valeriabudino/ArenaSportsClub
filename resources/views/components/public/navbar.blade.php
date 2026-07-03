@@ -5,21 +5,22 @@
         </h1>
 
         <div class="hidden md:flex gap-8 text-white font-semibold">
-            <a href="#" class="text-lime-400">Inicio</a>
-            <a href="#" class="hover:text-lime-400 transition">Canchas</a>
-            <a href="#" class="hover:text-lime-400 transition">Reservas</a>
-            <a href="#" class="hover:text-lime-400 transition">Nosotros</a>
-            <a href="#" class="hover:text-lime-400 transition">Contacto</a>
+            <a href="{{ route('home') }}">Inicio</a>
+            <a href="{{ route('courts.index') }}">Canchas</a>
+            <a href="{{ route('reservations.index') }}">Reservas</a>
+            <a href="{{ route('tournaments.index') }}">Torneos</a>
+            <a href="{{ route('about') }}">Nosotros</a>
+            <a href="{{ route('contact') }}">Contacto</a>
         </div>
 
         <div class="hidden md:flex gap-3">
             <a href="/login"
-               class="text-white px-5 py-2 rounded-md border border-white/40 hover:border-lime-400 transition font-bold">
+                class="text-white px-5 py-2 rounded-md border border-white/40 hover:border-lime-400 transition font-bold">
                 Iniciar sesión
             </a>
 
             <a href="/register"
-               class="bg-lime-400 text-black px-5 py-2 rounded-md font-black hover:bg-lime-300 transition">
+                class="bg-lime-400 text-black px-5 py-2 rounded-md font-black hover:bg-lime-300 transition">
                 Registrarse
             </a>
         </div>
