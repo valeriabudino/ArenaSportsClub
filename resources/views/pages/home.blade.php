@@ -8,4 +8,6 @@
 
 <x-public.features />
 
+<x-public.courts />
+
 @endsection
