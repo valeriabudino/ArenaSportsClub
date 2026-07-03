@@ -38,60 +38,233 @@ new #[Layout('layouts.guest')] class extends Component
     }
 }; ?>
 
-<div>
-    <form wire:submit="register">
-        <!-- Name -->
-        <div>
-            <x-input-label for="name" :value="__('Name')" />
-            <x-text-input wire:model="name" id="name" class="block mt-1 w-full" type="text" name="name" required autofocus autocomplete="name" />
-            <x-input-error :messages="$errors->get('name')" class="mt-2" />
+<div class="min-h-screen flex items-center justify-center bg-[#07110d] px-6 py-10">
+
+    <div class="w-full max-w-5xl bg-white rounded-[2rem] overflow-hidden shadow-2xl grid md:grid-cols-2">
+
+        {{-- Branding --}}
+        <div class="hidden md:flex relative bg-cover bg-center"
+             style="background-image: url('{{ asset('images/hero-arena.jpg') }}')">
+
+            <div class="absolute inset-0 bg-black/60"></div>
+
+            <div class="relative z-10 p-10 flex flex-col justify-end text-white">
+
+                <div class="inline-flex items-center gap-3 mb-4">
+
+                    <div class="h-12 w-12 rounded-full bg-lime-400 flex items-center justify-center text-[#07110d] shadow-lg">
+
+                        <svg 
+                            class="h-7 w-7"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            viewBox="0 0 24 24">
+
+                            <circle cx="12" cy="12" r="9"/>
+
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                d="M12 7l4 3-1.5 5h-5L8 10l4-3z"/>
+
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                d="M8 10l-4-1M16 10l4-1M9.5 15l-2 4M14.5 15l2 4"/>
+                        </svg>
+
+                    </div>
+
+
+                    <h2 class="text-2xl font-black uppercase">
+                        Arena<span class="text-lime-400">Sports</span>Club
+                    </h2>
+
+                </div>
+
+
+                <p class="text-white/80 max-w-xs">
+                    Creá tu cuenta y empezá a reservar tus canchas favoritas.
+                </p>
+
+            </div>
+
         </div>
 
-        <!-- Email Address -->
-        <div class="mt-4">
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input wire:model="email" id="email" class="block mt-1 w-full" type="email" name="email" required autocomplete="username" />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
-        </div>
 
-        <!-- Phone -->
-        <div class="mt-4">
-            <x-input-label for="phone" :value="__('Phone (WhatsApp)')" />
-            <x-text-input wire:model="phone" id="phone" class="block mt-1 w-full" type="tel" name="phone" autocomplete="tel" />
-            <x-input-error :messages="$errors->get('phone')" class="mt-2" />
-        </div>
 
-        <!-- Password -->
-        <div class="mt-4">
-            <x-input-label for="password" :value="__('Password')" />
+        {{-- Formulario --}}
+        <div class="p-10">
 
-            <x-text-input wire:model="password" id="password" class="block mt-1 w-full"
-                            type="password"
-                            name="password"
-                            required autocomplete="new-password" />
+            <a href="{{ route('home') }}"
+               wire:navigate
+               class="inline-flex items-center gap-2 text-sm font-bold text-gray-500 hover:text-lime-500 mb-6">
 
-            <x-input-error :messages="$errors->get('password')" class="mt-2" />
-        </div>
+                ← Volver al inicio
 
-        <!-- Confirm Password -->
-        <div class="mt-4">
-            <x-input-label for="password_confirmation" :value="__('Confirm Password')" />
-
-            <x-text-input wire:model="password_confirmation" id="password_confirmation" class="block mt-1 w-full"
-                            type="password"
-                            name="password_confirmation" required autocomplete="new-password" />
-
-            <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
-        </div>
-
-        <div class="flex items-center justify-end mt-4">
-            <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" href="{{ route('login') }}" wire:navigate>
-                {{ __('Already registered?') }}
             </a>
 
-            <x-primary-button class="ms-4">
-                {{ __('Register') }}
-            </x-primary-button>
+
+            <h1 class="text-3xl font-black uppercase text-[#07110d]">
+                Crear cuenta
+            </h1>
+
+
+            <p class="text-gray-500 mt-2">
+                Unite a ArenaSportsClub
+            </p>
+
+
+
+            <form wire:submit="register" class="mt-8 space-y-4">
+
+
+                {{-- Nombre --}}
+                <div>
+
+                    <label class="font-bold text-sm">
+                        Nombre
+                    </label>
+
+
+                    <input
+                        wire:model="name"
+                        type="text"
+                        required
+                        autofocus
+                        class="mt-2 w-full rounded-xl border-gray-300 focus:border-lime-400 focus:ring-lime-400"
+                    >
+
+
+                    <x-input-error :messages="$errors->get('name')" class="mt-2" />
+
+                </div>
+
+
+
+
+                {{-- Email --}}
+                <div>
+
+                    <label class="font-bold text-sm">
+                        Email
+                    </label>
+
+
+                    <input
+                        wire:model="email"
+                        type="email"
+                        required
+                        class="mt-2 w-full rounded-xl border-gray-300 focus:border-lime-400 focus:ring-lime-400"
+                    >
+
+
+                    <x-input-error :messages="$errors->get('email')" class="mt-2" />
+
+                </div>
+
+
+
+
+                {{-- Teléfono --}}
+                <div>
+
+                    <label class="font-bold text-sm">
+                        WhatsApp
+                    </label>
+
+
+                    <input
+                        wire:model="phone"
+                        type="tel"
+                        class="mt-2 w-full rounded-xl border-gray-300 focus:border-lime-400 focus:ring-lime-400"
+                    >
+
+
+                    <x-input-error :messages="$errors->get('phone')" class="mt-2" />
+
+                </div>
+
+
+
+
+
+                {{-- Password --}}
+                <div>
+
+                    <label class="font-bold text-sm">
+                        Contraseña
+                    </label>
+
+
+                    <input
+                        wire:model="password"
+                        type="password"
+                        required
+                        class="mt-2 w-full rounded-xl border-gray-300 focus:border-lime-400 focus:ring-lime-400"
+                    >
+
+
+                    <x-input-error :messages="$errors->get('password')" class="mt-2" />
+
+                </div>
+
+
+
+
+                {{-- Confirm Password --}}
+                <div>
+
+                    <label class="font-bold text-sm">
+                        Confirmar contraseña
+                    </label>
+
+
+                    <input
+                        wire:model="password_confirmation"
+                        type="password"
+                        required
+                        class="mt-2 w-full rounded-xl border-gray-300 focus:border-lime-400 focus:ring-lime-400"
+                    >
+
+
+                    <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
+
+                </div>
+
+
+
+
+                <button
+                    type="submit"
+                    class="w-full bg-lime-400 py-3 rounded-xl font-black uppercase hover:bg-lime-300 transition">
+
+                    Registrarme
+
+                </button>
+
+
+            </form>
+
+
+
+            <p class="mt-6 text-center text-sm text-gray-500">
+
+                ¿Ya tenés cuenta?
+
+                <a href="{{ route('login') }}"
+                   wire:navigate
+                   class="font-bold text-lime-500">
+
+                    Iniciar sesión
+
+                </a>
+
+            </p>
+
         </div>
-    </form>
+
+    </div>
+
 </div>
