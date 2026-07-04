@@ -20,4 +20,9 @@ class Court extends Model
     {
         return $this->belongsTo(Sport::class);
     }
+
+    public function turns()
+    {
+        return $this->hasMany(Turn::class);
+    }
 }
