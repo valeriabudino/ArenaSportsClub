@@ -2,6 +2,7 @@
 
 use App\Models\Court;
 use App\Models\Turn;
+use Illuminate\Support\Str;
 use Livewire\Volt\Component;
 
 new class extends Component {
@@ -30,6 +31,7 @@ new class extends Component {
         $turn->update([
             'user_id' => auth()->id(),
             'status' => 'booked',
+            'qr_code' => Str::uuid(),
         ]);
 
         session()->flash('success', 'Turno reservado con exito');

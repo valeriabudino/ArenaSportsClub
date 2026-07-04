@@ -14,6 +14,7 @@ class Turn extends Model
         'end_time',
         'price',
         'status',
+        'qr_code',
     ];
 
     public function court()
