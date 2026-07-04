@@ -5,7 +5,7 @@ use Livewire\Attributes\Layout;
 use Livewire\Volt\Component;
 use Livewire\WithPagination;
 
-new #[Layout('layouts.app')] class extends Component {
+new #[Layout('layouts.admin')] class extends Component {
     use WithPagination;
 
     public $search = '';
@@ -15,13 +15,7 @@ new #[Layout('layouts.app')] class extends Component {
     public function with(): array
     {
         return [
-            'turns' => Turn::with('court.sport')
-                ->when($this->search, fn($q) => $q->whereHas('court', fn($q) => $q->where('name', 'like', "%{$this->search}%")))
-                ->when($this->statusFilter, fn($q) => $q->where('status', $this->statusFilter))
-                ->when($this->dateFilter, fn($q) => $q->where('date', $this->dateFilter))
-                ->orderBy('date')
-                ->orderBy('start_time')
-                ->paginate(20),
+            'turns' => Turn::with('court.sport')->when($this->search, fn($q) => $q->whereHas('court', fn($q) => $q->where('name', 'like', "%{$this->search}%")))->when($this->statusFilter, fn($q) => $q->where('status', $this->statusFilter))->when($this->dateFilter, fn($q) => $q->where('date', $this->dateFilter))->orderBy('date')->orderBy('start_time')->paginate(20),
         ];
     }
 };
@@ -29,55 +23,99 @@ new #[Layout('layouts.app')] class extends Component {
 ?>
 
 <div>
-    <h1 class="text-2xl font-bold mb-4">Turnos</h1>
+    <div class="mb-8">
+        <h1 class="text-3xl font-black text-gray-900">
+            Gestión de turnos
+        </h1>
 
-    <div class="flex gap-4 mb-4">
-        <input type="text" wire:model.live="search" placeholder="Buscar por cancha..." class="border rounded px-3 py-2">
-        <select wire:model.live="statusFilter" class="border rounded px-3 py-2">
-            <option value="">Todos los estados</option>
-            <option value="available">Disponible</option>
-            <option value="booked">Reservado</option>
-            <option value="cancelled">Cancelado</option>
-        </select>
-        <input type="date" wire:model.live="dateFilter" class="border rounded px-3 py-2">
+        <p class="text-gray-500 mt-2">
+            Consultá, filtrá y administrá los turnos disponibles o reservados.
+        </p>
     </div>
 
-    <table class="w-full border">
-        <thead>
-            <tr class="bg-gray-100">
-                <th class="border px-4 py-2">Deporte</th>
-                <th class="border px-4 py-2">Cancha</th>
-                <th class="border px-4 py-2">Fecha</th>
-                <th class="border px-4 py-2">Inicio</th>
-                <th class="border px-4 py-2">Fin</th>
-                <th class="border px-4 py-2">Precio</th>
-                <th class="border px-4 py-2">Estado</th>
-            </tr>
-        </thead>
-        <tbody>
-            @forelse ($turns as $turn)
-                <tr>
-                    <td class="border px-4 py-2">{{ $turn->court->sport->name }}</td>
-                    <td class="border px-4 py-2">{{ $turn->court->name }}</td>
-                    <td class="border px-4 py-2">{{ $turn->date }}</td>
-                    <td class="border px-4 py-2">{{ substr($turn->start_time, 0, 5) }}</td>
-                    <td class="border px-4 py-2">{{ substr($turn->end_time, 0, 5) }}</td>
-                    <td class="border px-4 py-2">${{ number_format($turn->price, 0, ',', '.') }}</td>
-                    <td class="border px-4 py-2">
-                        <span class="px-2 py-1 rounded text-white {{ $turn->status === 'available' ? 'bg-green-500' : ($turn->status === 'booked' ? 'bg-blue-500' : 'bg-red-500') }}">
-                            {{ ucfirst($turn->status) }}
-                        </span>
-                    </td>
-                </tr>
-            @empty
-                <tr>
-                    <td colspan="7" class="border px-4 py-2 text-center">No hay turnos</td>
-                </tr>
-            @endforelse
-        </tbody>
-    </table>
+    <div class="bg-white rounded-2xl shadow p-8">
+        <div class="grid md:grid-cols-3 gap-4 mb-8">
+            <input type="text" wire:model.live="search" placeholder="Buscar por cancha..."
+                class="w-full rounded-xl border-gray-300 focus:border-lime-400 focus:ring-lime-400">
 
-    <div class="mt-4">
-        {{ $turns->links() }}
+            <select wire:model.live="statusFilter"
+                class="w-full rounded-xl border-gray-300 focus:border-lime-400 focus:ring-lime-400">
+                <option value="">Todos los estados</option>
+                <option value="available">Disponible</option>
+                <option value="booked">Reservado</option>
+                <option value="cancelled">Cancelado</option>
+            </select>
+
+            <input type="date" wire:model.live="dateFilter"
+                class="w-full rounded-xl border-gray-300 focus:border-lime-400 focus:ring-lime-400">
+        </div>
+
+        <div class="overflow-x-auto rounded-2xl border border-gray-100">
+            <table class="min-w-full">
+                <thead class="bg-[#07110d] text-white">
+                    <tr>
+                        <th class="px-6 py-4 text-left text-xs font-black uppercase">Deporte</th>
+                        <th class="px-6 py-4 text-left text-xs font-black uppercase">Cancha</th>
+                        <th class="px-6 py-4 text-left text-xs font-black uppercase">Fecha</th>
+                        <th class="px-6 py-4 text-left text-xs font-black uppercase">Inicio</th>
+                        <th class="px-6 py-4 text-left text-xs font-black uppercase">Fin</th>
+                        <th class="px-6 py-4 text-left text-xs font-black uppercase">Precio</th>
+                        <th class="px-6 py-4 text-center text-xs font-black uppercase">Estado</th>
+                    </tr>
+                </thead>
+
+                <tbody class="divide-y divide-gray-100 bg-white">
+                    @forelse ($turns as $turn)
+                        <tr class="hover:bg-lime-50 transition">
+                            <td class="px-6 py-4 font-bold text-gray-900">
+                                {{ $turn->court->sport->name }}
+                            </td>
+
+                            <td class="px-6 py-4 text-gray-700">
+                                {{ $turn->court->name }}
+                            </td>
+
+                            <td class="px-6 py-4 text-gray-700">
+                                {{ $turn->date }}
+                            </td>
+
+                            <td class="px-6 py-4 text-gray-700">
+                                {{ substr($turn->start_time, 0, 5) }}
+                            </td>
+
+                            <td class="px-6 py-4 text-gray-700">
+                                {{ substr($turn->end_time, 0, 5) }}
+                            </td>
+
+                            <td class="px-6 py-4 font-bold text-gray-900">
+                                ${{ number_format($turn->price, 0, ',', '.') }}
+                            </td>
+
+                            <td class="px-6 py-4 text-center">
+                                <span
+                                    class="px-3 py-1 rounded-full text-sm font-bold
+                                    {{ $turn->status === 'available'
+                                        ? 'bg-lime-100 text-lime-700'
+                                        : ($turn->status === 'booked'
+                                            ? 'bg-blue-100 text-blue-700'
+                                            : 'bg-red-100 text-red-700') }}">
+                                    {{ $turn->status === 'available' ? 'Disponible' : ($turn->status === 'booked' ? 'Reservado' : 'Cancelado') }}
+                                </span>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="7" class="px-6 py-8 text-center text-gray-500">
+                                No hay turnos registrados.
+                            </td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+
+        <div class="mt-6">
+            {{ $turns->links() }}
+        </div>
     </div>
 </div>

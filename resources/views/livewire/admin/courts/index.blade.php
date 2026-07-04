@@ -5,8 +5,7 @@ use App\Models\Sport;
 use Livewire\Attributes\Layout;
 use Livewire\Volt\Component;
 
-new #[Layout('layouts.app')] class extends Component
-{
+new #[Layout('layouts.admin')] class extends Component {
     public $sport_id = '';
     public $name = '';
     public $description = '';
@@ -91,121 +90,316 @@ new #[Layout('layouts.app')] class extends Component
 }; ?>
 
 <div>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            Gestión de Canchas
-        </h2>
-    </x-slot>
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900">
-                    <div class="flex justify-between items-center mb-6">
-                        <h3 class="text-lg font-semibold">Canchas</h3>
-                        <button wire:click="$toggle('showForm')"
-                                class="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700">
-                            {{ $showForm ? 'Cancelar' : 'Nueva cancha' }}
-                        </button>
-                    </div>
+    {{-- Header --}}
+    <div class="mb-8">
 
-                    @if ($showForm)
-                        <form wire:submit="save" class="mb-6 p-4 bg-gray-50 rounded-lg">
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700">Deporte</label>
-                                    <select wire:model="sport_id"
-                                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                        <option value="">Seleccionar...</option>
-                                        @foreach ($sports as $sport)
-                                            <option value="{{ $sport->id }}">{{ $sport->name }}</option>
-                                        @endforeach
-                                    </select>
-                                    @error('sport_id') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700">Nombre</label>
-                                    <input wire:model="name" type="text"
-                                           class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                    @error('name') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700">Precio por hora ($)</label>
-                                    <input wire:model="price_per_hour" type="number" step="0.01"
-                                           class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                    @error('price_per_hour') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700">Capacidad (jugadores)</label>
-                                    <input wire:model="capacity" type="number"
-                                           class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                </div>
-                                <div class="md:col-span-2">
-                                    <label class="block text-sm font-medium text-gray-700">Descripción</label>
-                                    <textarea wire:model="description" rows="3"
-                                              class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"></textarea>
-                                </div>
-                                <div class="md:col-span-2">
-                                    <label class="inline-flex items-center">
-                                        <input wire:model="is_active" type="checkbox" value="1"
-                                               class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500">
-                                        <span class="ml-2 text-sm text-gray-700">Activa</span>
-                                    </label>
-                                </div>
-                            </div>
-                            <div class="mt-4">
-                                <button type="submit"
-                                        class="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700">
-                                    {{ $editingId ? 'Actualizar' : 'Guardar' }}
-                                </button>
-                            </div>
-                        </form>
-                    @endif
+        <h1 class="text-3xl font-black text-gray-900">
+            Gestión de canchas
+        </h1>
 
-                    <div class="overflow-x-auto">
-                        <table class="min-w-full divide-y divide-gray-200">
-                            <thead>
-                                <tr>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Nombre</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Deporte</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Precio/hora</th>
-                                    <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Capacidad</th>
-                                    <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Estado</th>
-                                    <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Acciones</th>
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y divide-gray-200">
-                                @forelse ($courts as $court)
-                                    <tr>
-                                        <td class="px-6 py-4">{{ $court->name }}</td>
-                                        <td class="px-6 py-4">{{ $court->sport->name }}</td>
-                                        <td class="px-6 py-4">${{ number_format($court->price_per_hour, 2) }}</td>
-                                        <td class="px-6 py-4 text-center">{{ $court->capacity ?? '-' }}</td>
-                                        <td class="px-6 py-4 text-center">
-                                            <span class="px-2 py-1 rounded text-xs {{ $court->is_active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
-                                                {{ $court->is_active ? 'Activa' : 'Inactiva' }}
-                                            </span>
-                                        </td>
-                                        <td class="px-6 py-4 text-right space-x-2">
-                                            <button wire:click="edit({{ $court->id }})"
-                                                    class="text-indigo-600 hover:text-indigo-900">Editar</button>
-                                            <button wire:click="delete({{ $court->id }})"
-                                                    wire:confirm="¿Eliminar esta cancha?"
-                                                    class="text-red-600 hover:text-red-900">Eliminar</button>
-                                        </td>
-                                    </tr>
-                                @empty
-                                    <tr>
-                                        <td colspan="6" class="px-6 py-4 text-center text-gray-500">
-                                            No hay canchas registradas.
-                                        </td>
-                                    </tr>
-                                @endforelse
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <p class="text-gray-500 mt-2">
+            Administrá las canchas disponibles, precios y características.
+        </p>
+
     </div>
+
+
+
+    {{-- Contenedor --}}
+    <div class="bg-white rounded-2xl shadow p-8">
+
+
+        <div class="flex justify-between items-center mb-6">
+
+            <h2 class="text-xl font-black text-gray-900">
+                Canchas registradas
+            </h2>
+
+
+            <button wire:click="$toggle('showForm')"
+                class="bg-lime-400 text-black px-5 py-3 rounded-xl font-black hover:bg-lime-300 transition">
+
+                {{ $showForm ? 'Cancelar' : 'Nueva cancha' }}
+
+            </button>
+
+        </div>
+
+
+
+        {{-- Formulario --}}
+        @if ($showForm)
+
+            <form wire:submit="save" class="mb-8 bg-gray-50 rounded-2xl border border-gray-100 p-6">
+
+
+                <div class="grid md:grid-cols-2 gap-5">
+
+
+                    {{-- Deporte --}}
+                    <div>
+
+                        <label class="font-bold text-sm text-gray-700">
+                            Deporte
+                        </label>
+
+
+                        <select wire:model="sport_id"
+                            class="mt-2 w-full rounded-xl border-gray-300 focus:border-lime-400 focus:ring-lime-400">
+
+
+                            <option value="">
+                                Seleccionar...
+                            </option>
+
+
+                            @foreach ($sports as $sport)
+                                <option value="{{ $sport->id }}">
+                                    {{ $sport->name }}
+                                </option>
+                            @endforeach
+
+
+                        </select>
+
+
+                        @error('sport_id')
+                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                        @enderror
+
+                    </div>
+
+
+
+
+                    {{-- Nombre --}}
+                    <div>
+
+                        <label class="font-bold text-sm text-gray-700">
+                            Nombre
+                        </label>
+
+
+                        <input wire:model="name" type="text"
+                            class="mt-2 w-full rounded-xl border-gray-300 focus:border-lime-400 focus:ring-lime-400">
+
+
+                        @error('name')
+                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                        @enderror
+
+                    </div>
+
+
+
+
+                    {{-- Precio --}}
+                    <div>
+
+                        <label class="font-bold text-sm text-gray-700">
+                            Precio por hora
+                        </label>
+
+
+                        <input wire:model="price_per_hour" type="number"
+                            class="mt-2 w-full rounded-xl border-gray-300 focus:border-lime-400 focus:ring-lime-400">
+
+
+                        @error('price_per_hour')
+                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                        @enderror
+
+                    </div>
+
+
+
+
+
+                    {{-- Capacidad --}}
+                    <div>
+
+                        <label class="font-bold text-sm text-gray-700">
+                            Capacidad jugadores
+                        </label>
+
+
+                        <input wire:model="capacity" type="number"
+                            class="mt-2 w-full rounded-xl border-gray-300 focus:border-lime-400 focus:ring-lime-400">
+
+                    </div>
+
+
+
+
+                    {{-- Descripcion --}}
+                    <div class="md:col-span-2">
+
+                        <label class="font-bold text-sm text-gray-700">
+                            Descripción
+                        </label>
+
+
+                        <textarea wire:model="description" rows="3"
+                            class="mt-2 w-full rounded-xl border-gray-300 focus:border-lime-400 focus:ring-lime-400"></textarea>
+
+                    </div>
+
+
+
+
+                    {{-- Activa --}}
+                    <div class="md:col-span-2">
+
+                        <label class="flex items-center gap-2">
+
+                            <input wire:model="is_active" type="checkbox"
+                                class="rounded text-lime-400 focus:ring-lime-400">
+
+                            <span class="font-bold text-gray-700">
+                                Cancha activa
+                            </span>
+
+                        </label>
+
+                    </div>
+
+
+                </div>
+
+
+
+
+                <div class="mt-6 flex justify-end">
+
+                    <button type="submit"
+                        class="bg-lime-400 text-black px-6 py-3 rounded-xl font-black hover:bg-lime-300 transition">
+
+                        {{ $editingId ? 'Actualizar cancha' : 'Guardar cancha' }}
+
+                    </button>
+
+                </div>
+
+
+            </form>
+
+        @endif
+
+
+
+
+
+        {{-- Tabla --}}
+        <div class="overflow-x-auto rounded-2xl border border-gray-100">
+
+            <table class="min-w-full">
+
+                <thead class="bg-[#07110d] text-white">
+
+                    <tr>
+                        <th class="px-6 py-4 text-left uppercase text-xs">Nombre</th>
+                        <th class="px-6 py-4 text-left uppercase text-xs">Deporte</th>
+                        <th class="px-6 py-4 text-left uppercase text-xs">Precio</th>
+                        <th class="px-6 py-4 text-center uppercase text-xs">Capacidad</th>
+                        <th class="px-6 py-4 text-center uppercase text-xs">Estado</th>
+                        <th class="px-6 py-4 text-right uppercase text-xs">Acciones</th>
+                    </tr>
+
+                </thead>
+
+
+                <tbody class="divide-y divide-gray-100">
+
+
+                    @forelse ($courts as $court)
+                        <tr class="hover:bg-lime-50 transition">
+
+
+                            <td class="px-6 py-4 font-bold">
+                                {{ $court->name }}
+                            </td>
+
+
+                            <td class="px-6 py-4">
+                                {{ $court->sport->name }}
+                            </td>
+
+
+                            <td class="px-6 py-4">
+                                ${{ number_format($court->price_per_hour, 2) }}
+                            </td>
+
+
+                            <td class="px-6 py-4 text-center">
+                                {{ $court->capacity ?? '-' }}
+                            </td>
+
+
+                            <td class="px-6 py-4 text-center">
+
+                                <span
+                                    class="px-3 py-1 rounded-full text-sm font-bold
+                                    {{ $court->is_active ? 'bg-lime-100 text-lime-700' : 'bg-red-100 text-red-700' }}">
+
+                                    {{ $court->is_active ? 'Activa' : 'Inactiva' }}
+
+                                </span>
+
+                            </td>
+
+
+
+                            <td class="px-6 py-4 text-right space-x-3">
+
+
+                                <button wire:click="edit({{ $court->id }})" class="font-bold text-lime-600">
+
+                                    Editar
+
+                                </button>
+
+
+
+                                <button wire:click="delete({{ $court->id }})" wire:confirm="¿Eliminar esta cancha?"
+                                    class="font-bold text-red-600">
+
+                                    Eliminar
+
+                                </button>
+
+
+                            </td>
+
+
+                        </tr>
+
+
+                    @empty
+
+
+                        <tr>
+
+                            <td colspan="6" class="px-6 py-8 text-center text-gray-500">
+
+                                No hay canchas registradas.
+
+                            </td>
+
+                        </tr>
+                    @endforelse
+
+
+                </tbody>
+
+
+            </table>
+
+
+        </div>
+
+
+    </div>
+
+
 </div>

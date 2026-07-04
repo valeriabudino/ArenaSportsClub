@@ -4,7 +4,7 @@ use App\Models\Sport;
 use Livewire\Attributes\Layout;
 use Livewire\Volt\Component;
 
-new #[Layout('layouts.app')] class extends Component
+new #[Layout('layouts.admin')] class extends Component
 {
     public $name = '';
     public $icon = '';
@@ -45,10 +45,12 @@ new #[Layout('layouts.app')] class extends Component
     public function delete($id)
     {
         $sport = Sport::findOrFail($id);
+
         if ($sport->courts()->count() > 0) {
             session()->flash('error', 'No se puede eliminar un deporte con canchas asociadas.');
             return;
         }
+
         $sport->delete();
     }
 
@@ -69,90 +71,137 @@ new #[Layout('layouts.app')] class extends Component
 }; ?>
 
 <div>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            Gestión de Deportes
-        </h2>
-    </x-slot>
+    <div class="mb-8">
+        <h1 class="text-3xl font-black text-gray-900">
+            Gestión de deportes
+        </h1>
+        <p class="text-gray-500 mt-2">
+            Administrá los deportes disponibles dentro del complejo.
+        </p>
+    </div>
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900">
-                    @if (session('error'))
-                        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-                            {{ session('error') }}
-                        </div>
-                    @endif
+    @if (session('error'))
+        <div class="mb-6 rounded-xl border border-red-200 bg-red-50 px-5 py-4 text-red-700 font-semibold">
+            {{ session('error') }}
+        </div>
+    @endif
 
-                    <div class="flex justify-between items-center mb-6">
-                        <h3 class="text-lg font-semibold">Deportes</h3>
-                        <button wire:click="$toggle('showForm')"
-                                class="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700">
-                            {{ $showForm ? 'Cancelar' : 'Nuevo deporte' }}
-                        </button>
+    <div class="bg-white rounded-2xl shadow p-8">
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="text-xl font-black text-gray-900">
+                Deportes registrados
+            </h2>
+
+            <button
+                wire:click="$toggle('showForm')"
+                class="bg-lime-400 text-black px-5 py-3 rounded-xl font-black hover:bg-lime-300 transition"
+            >
+                {{ $showForm ? 'Cancelar' : 'Nuevo deporte' }}
+            </button>
+        </div>
+
+        @if ($showForm)
+            <form wire:submit="save" class="mb-8 rounded-2xl bg-gray-50 p-6 border border-gray-100">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700">
+                            Nombre
+                        </label>
+
+                        <input
+                            wire:model="name"
+                            type="text"
+                            class="mt-2 block w-full rounded-xl border-gray-300 shadow-sm focus:border-lime-400 focus:ring-lime-400"
+                        >
+
+                        @error('name')
+                            <span class="text-red-500 text-sm mt-1 block">{{ $message }}</span>
+                        @enderror
                     </div>
 
-                    @if ($showForm)
-                        <form wire:submit="save" class="mb-6 p-4 bg-gray-50 rounded-lg">
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700">Nombre</label>
-                                    <input wire:model="name" type="text"
-                                           class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                    @error('name') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700">Icono</label>
-                                    <input wire:model="icon" type="text" placeholder="ej: futbol, tenis..."
-                                           class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                </div>
-                            </div>
-                            <div class="mt-4">
-                                <button type="submit"
-                                        class="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700">
-                                    {{ $editingId ? 'Actualizar' : 'Guardar' }}
-                                </button>
-                            </div>
-                        </form>
-                    @endif
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700">
+                            Icono
+                        </label>
 
-                    <div class="overflow-x-auto">
-                        <table class="min-w-full divide-y divide-gray-200">
-                            <thead>
-                                <tr>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Nombre</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Icono</th>
-                                    <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Canchas</th>
-                                    <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Acciones</th>
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y divide-gray-200">
-                                @forelse ($sports as $sport)
-                                    <tr>
-                                        <td class="px-6 py-4">{{ $sport->name }}</td>
-                                        <td class="px-6 py-4">{{ $sport->icon ?? '-' }}</td>
-                                        <td class="px-6 py-4 text-center">{{ $sport->courts_count }}</td>
-                                        <td class="px-6 py-4 text-right space-x-2">
-                                            <button wire:click="edit({{ $sport->id }})"
-                                                    class="text-indigo-600 hover:text-indigo-900">Editar</button>
-                                            <button wire:click="delete({{ $sport->id }})"
-                                                    wire:confirm="¿Eliminar este deporte?"
-                                                    class="text-red-600 hover:text-red-900">Eliminar</button>
-                                        </td>
-                                    </tr>
-                                @empty
-                                    <tr>
-                                        <td colspan="4" class="px-6 py-4 text-center text-gray-500">
-                                            No hay deportes registrados.
-                                        </td>
-                                    </tr>
-                                @endforelse
-                            </tbody>
-                        </table>
+                        <input
+                            wire:model="icon"
+                            type="text"
+                            placeholder="ej: futbol, padel, tenis..."
+                            class="mt-2 block w-full rounded-xl border-gray-300 shadow-sm focus:border-lime-400 focus:ring-lime-400"
+                        >
+
+                        @error('icon')
+                            <span class="text-red-500 text-sm mt-1 block">{{ $message }}</span>
+                        @enderror
                     </div>
                 </div>
-            </div>
+
+                <div class="mt-6 flex justify-end">
+                    <button
+                        type="submit"
+                        class="bg-lime-400 text-black px-6 py-3 rounded-xl font-black hover:bg-lime-300 transition"
+                    >
+                        {{ $editingId ? 'Actualizar deporte' : 'Guardar deporte' }}
+                    </button>
+                </div>
+            </form>
+        @endif
+
+        <div class="overflow-x-auto rounded-2xl border border-gray-100">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-[#07110d]">
+                    <tr>
+                        <th class="px-6 py-4 text-left text-xs font-black text-white uppercase">Nombre</th>
+                        <th class="px-6 py-4 text-left text-xs font-black text-white uppercase">Icono</th>
+                        <th class="px-6 py-4 text-center text-xs font-black text-white uppercase">Canchas</th>
+                        <th class="px-6 py-4 text-right text-xs font-black text-white uppercase">Acciones</th>
+                    </tr>
+                </thead>
+
+                <tbody class="divide-y divide-gray-100 bg-white">
+                    @forelse ($sports as $sport)
+                        <tr class="hover:bg-lime-50/50 transition">
+                            <td class="px-6 py-4 font-bold text-gray-900">
+                                {{ $sport->name }}
+                            </td>
+
+                            <td class="px-6 py-4 text-gray-600">
+                                {{ $sport->icon ?? '-' }}
+                            </td>
+
+                            <td class="px-6 py-4 text-center">
+                                <span class="inline-flex items-center justify-center rounded-full bg-lime-100 px-3 py-1 text-sm font-black text-lime-700">
+                                    {{ $sport->courts_count }}
+                                </span>
+                            </td>
+
+                            <td class="px-6 py-4 text-right space-x-3">
+                                <button
+                                    wire:click="edit({{ $sport->id }})"
+                                    class="font-bold text-lime-600 hover:text-lime-700"
+                                >
+                                    Editar
+                                </button>
+
+                                <button
+                                    wire:click="delete({{ $sport->id }})"
+                                    wire:confirm="¿Eliminar este deporte?"
+                                    class="font-bold text-red-600 hover:text-red-700"
+                                >
+                                    Eliminar
+                                </button>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="4" class="px-6 py-8 text-center text-gray-500">
+                                No hay deportes registrados.
+                            </td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
         </div>
     </div>
 </div>
