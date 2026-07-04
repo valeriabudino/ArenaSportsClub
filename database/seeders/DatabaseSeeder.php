@@ -19,7 +19,8 @@ class DatabaseSeeder extends Seeder
 
         User::factory()->create([
             'name' => 'Admin',
-            'email' => 'admin@example.com',
+            'email' => 'arenasportsclub@email.com',
+            'password' => bcrypt('arenasport'),
             'role' => 'admin',
         ]);
          $this->call(SportSeeder::class);
