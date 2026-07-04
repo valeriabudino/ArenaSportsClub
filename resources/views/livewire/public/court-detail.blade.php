@@ -14,6 +14,27 @@ new class extends Component {
         $this->selectedDate = now()->toDateString();
     }
 
+    public function reserve($turnId)
+    {
+        if (!auth()->check()) {
+            return redirect()->route('login');
+        }
+
+        $turn = Turn::where('id', $turnId)->where('status', 'available')->first();
+
+        if (!$turn) {
+            session()->flash('error', 'El turno ya no está disponible');
+            return;
+        }
+
+        $turn->update([
+            'user_id' => auth()->id(),
+            'status' => 'booked',
+        ]);
+
+        session()->flash('success', 'Turno reservado con éxito');
+    }
+
     public function with(): array
     {
         return [
@@ -28,6 +49,13 @@ new class extends Component {
 ?>
 
 <div class="max-w-4xl mx-auto">
+    @if (session('success'))
+        <div class="bg-green-500 text-white px-4 py-2 rounded mb-4">{{ session('success') }}</div>
+    @endif
+    @if (session('error'))
+        <div class="bg-red-500 text-white px-4 py-2 rounded mb-4">{{ session('error') }}</div>
+    @endif
+
     <a href="/canchas" class="text-lime-400 hover:underline mb-8 inline-block">&larr; Volver a canchas</a>
 
     <h1 class="text-5xl font-black uppercase text-lime-400">{{ $court->name }}</h1>
@@ -39,13 +67,11 @@ new class extends Component {
         <p class="mt-2"><span class="text-white/70">Precio:</span> <span class="text-lime-400 font-bold text-2xl">${{ number_format($court->price_per_hour, 0, ',', '.') }}/h</span></p>
     </div>
 
-    <!-- Selector de fecha -->
     <div class="mt-12">
         <h2 class="text-2xl font-bold text-white mb-4">Disponibilidad</h2>
         <input type="date" wire:model.live="selectedDate" class="px-4 py-2 rounded bg-white/10 text-white border border-lime-400">
     </div>
 
-    <!-- Grilla de turnos -->
     <div class="mt-6 grid grid-cols-2 md:grid-cols-4 gap-4">
         @forelse ($turns as $turn)
             <div class="bg-white/10 rounded-lg p-4 text-center {{ $turn->status === 'available' ? 'border border-lime-400' : 'opacity-50' }}">
@@ -53,6 +79,11 @@ new class extends Component {
                 <p class="text-lime-400 font-bold mt-2">${{ number_format($turn->price, 0, ',', '.') }}</p>
                 @if ($turn->status === 'available')
                     <span class="text-green-400 text-sm">Disponible</span>
+                    @auth
+                        <button wire:click="reserve({{ $turn->id }})" class="mt-2 w-full px-3 py-1 bg-lime-400 text-[#07110d] rounded font-bold text-sm hover:bg-lime-300 transition">
+                            Reservar
+                        </button>
+                    @endauth
                 @elseif ($turn->status === 'booked')
                     <span class="text-blue-400 text-sm">Reservado</span>
                 @else
