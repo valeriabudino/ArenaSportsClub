@@ -9,7 +9,7 @@ Route::get('canchas/{court}', function (App\Models\Court $court) {
     return view('pages.court-detail', compact('court'));
    })->name('courts.show');
 
-Route::view('/reservas', 'pages.reservations')->name('reservations.index');
+Route::view('/reservas', 'pages.reservations')->middleware(['auth'])->name('reservations.index');
 Route::view('/torneos', 'pages.tournaments')->name('tournaments.index');
 Route::view('/nosotros', 'pages.about')->name('about');
 Route::view('/contacto', 'pages.contact')->name('contact');

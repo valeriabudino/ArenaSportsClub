@@ -32,7 +32,7 @@ new class extends Component {
             'status' => 'booked',
         ]);
 
-        session()->flash('success', 'Turno reservado con éxito');
+        session()->flash('success', 'Turno reservado con exito');
     }
 
     public function with(): array
@@ -56,15 +56,15 @@ new class extends Component {
         <div class="bg-red-500 text-white px-4 py-2 rounded mb-4">{{ session('error') }}</div>
     @endif
 
-    <a href="/canchas" class="text-lime-400 hover:underline mb-8 inline-block">&larr; Volver a canchas</a>
+    <a href="/canchas" class="text-lime-400 hover:underline mb-8 inline-block">Volver a canchas</a>
 
     <h1 class="text-5xl font-black uppercase text-lime-400">{{ $court->name }}</h1>
     <p class="text-white/70 text-lg mt-2">{{ $court->sport->name }}</p>
 
     <div class="mt-8 bg-white/10 rounded-lg p-8">
         <p class="text-white/80">{{ $court->description }}</p>
-        <p class="mt-4"><span class="text-white/70">Capacidad:</span> {{ $court->capacity }} personas</p>
-        <p class="mt-2"><span class="text-white/70">Precio:</span> <span class="text-lime-400 font-bold text-2xl">${{ number_format($court->price_per_hour, 0, ',', '.') }}/h</span></p>
+        <p class="mt-4">Capacidad: {{ $court->capacity }} personas</p>
+        <p class="mt-2">Precio: <span class="text-lime-400 font-bold text-2xl">${{ number_format($court->price_per_hour, 0, ',', '.') }}/h</span></p>
     </div>
 
     <div class="mt-12">
@@ -74,17 +74,19 @@ new class extends Component {
 
     <div class="mt-6 grid grid-cols-2 md:grid-cols-4 gap-4">
         @forelse ($turns as $turn)
-            <div class="bg-white/10 rounded-lg p-4 text-center {{ $turn->status === 'available' ? 'border border-lime-400' : 'opacity-50' }}">
+            @php
+                $isAvailable = $turn->status === 'available';
+                $isBooked = $turn->status === 'booked';
+            @endphp
+            <div class="bg-white/10 rounded-lg p-4 text-center @if ($isAvailable) border border-lime-400 @else opacity-50 @endif">
                 <p class="text-white font-bold">{{ substr($turn->start_time, 0, 5) }} - {{ substr($turn->end_time, 0, 5) }}</p>
                 <p class="text-lime-400 font-bold mt-2">${{ number_format($turn->price, 0, ',', '.') }}</p>
-                @if ($turn->status === 'available')
+                @if ($isAvailable)
                     <span class="text-green-400 text-sm">Disponible</span>
                     @auth
-                        <button wire:click="reserve({{ $turn->id }})" class="mt-2 w-full px-3 py-1 bg-lime-400 text-[#07110d] rounded font-bold text-sm hover:bg-lime-300 transition">
-                            Reservar
-                        </button>
+                        <button wire:click="reserve({{ $turn->id }})" class="mt-2 w-full px-3 py-1 bg-lime-400 text-gray-900 rounded font-bold text-sm hover:bg-lime-300 transition">Reservar</button>
                     @endauth
-                @elseif ($turn->status === 'booked')
+                @elseif ($isBooked)
                     <span class="text-blue-400 text-sm">Reservado</span>
                 @else
                     <span class="text-red-400 text-sm">Cancelado</span>
