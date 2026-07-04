@@ -9,5 +9,7 @@
 </head>
 <body class="bg-[#f5f5f5] text-[#101814] font-sans antialiased">
     @yield('content')
+
+    <x-public.whatsapp-button />
 </body>
 </html>

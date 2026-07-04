@@ -33,5 +33,7 @@
                 @yield('content')
             </main>
         </div>
+
+        <x-public.whatsapp-button />
     </body>
 </html>
