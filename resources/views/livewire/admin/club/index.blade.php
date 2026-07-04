@@ -1,3 +1,13 @@
+<?php
+
+use Livewire\Attributes\Layout;
+use Livewire\Volt\Component;
+
+new #[Layout('layouts.admin')] class extends Component {
+    //
+}; ?>
+
+
 <div class="p-8">
 
     {{-- Header --}}
@@ -24,9 +34,7 @@
                     Nombre del club
                 </label>
 
-                <input
-                    type="text"
-                    value="ArenaSportsClub"
+                <input type="text" value="ArenaSportsClub"
                     class="mt-2 w-full rounded-xl border-gray-300 focus:border-lime-400 focus:ring-lime-400">
             </div>
 
@@ -38,9 +46,7 @@
                     Email
                 </label>
 
-                <input
-                    type="email"
-                    value="arenasportsclub@email.com"
+                <input type="email" value="arenasportsclub@email.com"
                     class="mt-2 w-full rounded-xl border-gray-300 focus:border-lime-400 focus:ring-lime-400">
             </div>
 
@@ -52,9 +58,7 @@
                     WhatsApp
                 </label>
 
-                <input
-                    type="text"
-                    value="+54 370 000 0000"
+                <input type="text" value="+54 370 000 0000"
                     class="mt-2 w-full rounded-xl border-gray-300 focus:border-lime-400 focus:ring-lime-400">
             </div>
 
@@ -66,9 +70,7 @@
                     Dirección
                 </label>
 
-                <input
-                    type="text"
-                    value="Formosa, Argentina"
+                <input type="text" value="Formosa, Argentina"
                     class="mt-2 w-full rounded-xl border-gray-300 focus:border-lime-400 focus:ring-lime-400">
             </div>
 
@@ -80,9 +82,7 @@
                     Horario apertura
                 </label>
 
-                <input
-                    type="time"
-                    value="08:00"
+                <input type="time" value="08:00"
                     class="mt-2 w-full rounded-xl border-gray-300 focus:border-lime-400 focus:ring-lime-400">
             </div>
 
@@ -94,9 +94,7 @@
                     Horario cierre
                 </label>
 
-                <input
-                    type="time"
-                    value="23:00"
+                <input type="time" value="23:00"
                     class="mt-2 w-full rounded-xl border-gray-300 focus:border-lime-400 focus:ring-lime-400">
             </div>
 
@@ -110,9 +108,7 @@
                 </label>
 
 
-                <textarea
-                    rows="4"
-                    class="mt-2 w-full rounded-xl border-gray-300 focus:border-lime-400 focus:ring-lime-400">Complejo deportivo con canchas de fútbol y pádel.</textarea>
+                <textarea rows="4" class="mt-2 w-full rounded-xl border-gray-300 focus:border-lime-400 focus:ring-lime-400">Complejo deportivo con canchas de fútbol y pádel.</textarea>
 
             </div>
 
@@ -120,9 +116,7 @@
 
             <div class="md:col-span-2 flex justify-end">
 
-                <button
-                    type="button"
-                    class="bg-lime-400 px-8 py-3 rounded-xl font-black hover:bg-lime-300 transition">
+                <button type="button" class="bg-lime-400 px-8 py-3 rounded-xl font-black hover:bg-lime-300 transition">
 
                     Guardar cambios
 

@@ -1,50 +1,74 @@
-<?php
+@extends('layouts.admin')
 
-use Livewire\Attributes\Layout;
-use Livewire\Volt\Component;
+@section('content')
 
-new #[Layout('layouts.app')] class extends Component
-{
-    public function logout(): void
-    {
-        auth()->logout();
-        session()->invalidate();
-        session()->regenerateToken();
-        $this->redirect('/', navigate: true);
-    }
-}; ?>
+    <div class="py-10 bg-gray-100 min-h-screen">
+        <div class="max-w-7xl mx-auto px-6 lg:px-8">
 
-<div>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Panel de Administración') }}
-        </h2>
-    </x-slot>
+            <div class="mb-8">
+                <h1 class="text-3xl font-black text-gray-900">
+                    Bienvenido, {{ auth()->user()->name }}
+                </h1>
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900">
-                    <p class="mb-4">Bienvenido, {{ auth()->user()->name }}. Tienes permisos de administrador.</p>
+                <p class="text-gray-500 mt-2">
+                    Tenés permisos de administrador para gestionar ArenaSportsClub.
+                </p>
+            </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                        <div class="bg-indigo-50 p-4 rounded-lg border border-indigo-200">
-                            <h3 class="font-semibold text-indigo-800">Usuarios</h3>
-                            <p class="text-sm text-gray-600 mt-1">Gestionar usuarios del sistema</p>
-                        </div>
+            <div class="grid md:grid-cols-4 gap-6 mb-10">
+                <div class="bg-white rounded-2xl p-6 shadow">
+                    <p class="text-gray-500 text-sm font-bold">Canchas</p>
+                    <h3 class="text-3xl font-black text-lime-500 mt-2">12</h3>
+                </div>
 
-                        <div class="bg-indigo-50 p-4 rounded-lg border border-indigo-200">
-                            <h3 class="font-semibold text-indigo-800">Roles</h3>
-                            <p class="text-sm text-gray-600 mt-1">Administrar roles y permisos</p>
-                        </div>
+                <div class="bg-white rounded-2xl p-6 shadow">
+                    <p class="text-gray-500 text-sm font-bold">Turnos</p>
+                    <h3 class="text-3xl font-black text-lime-500 mt-2">48</h3>
+                </div>
 
-                        <div class="bg-indigo-50 p-4 rounded-lg border border-indigo-200">
-                            <h3 class="font-semibold text-indigo-800">Configuración</h3>
-                            <p class="text-sm text-gray-600 mt-1">Ajustes generales del sistema</p>
-                        </div>
-                    </div>
+                <div class="bg-white rounded-2xl p-6 shadow">
+                    <p class="text-gray-500 text-sm font-bold">Deportes</p>
+                    <h3 class="text-3xl font-black text-lime-500 mt-2">4</h3>
+                </div>
+
+                <div class="bg-white rounded-2xl p-6 shadow">
+                    <p class="text-gray-500 text-sm font-bold">Reservas</p>
+                    <h3 class="text-3xl font-black text-lime-500 mt-2">+120</h3>
                 </div>
             </div>
+
+            <div class="bg-white rounded-2xl shadow p-8">
+                <h2 class="text-2xl font-black mb-6">
+                    Accesos rápidos
+                </h2>
+
+                <div class="grid md:grid-cols-4 gap-5">
+                    <a href="{{ route('admin.courts') }}"
+                       class="p-6 rounded-2xl border hover:border-lime-400 hover:bg-lime-50 transition">
+                        <h3 class="font-black text-gray-900">Canchas</h3>
+                        <p class="text-sm text-gray-500 mt-2">Gestionar canchas.</p>
+                    </a>
+
+                    <a href="{{ route('admin.sports') }}"
+                       class="p-6 rounded-2xl border hover:border-lime-400 hover:bg-lime-50 transition">
+                        <h3 class="font-black text-gray-900">Deportes</h3>
+                        <p class="text-sm text-gray-500 mt-2">Gestionar deportes.</p>
+                    </a>
+
+                    <a href="{{ route('admin.turns.index') }}"
+                       class="p-6 rounded-2xl border hover:border-lime-400 hover:bg-lime-50 transition">
+                        <h3 class="font-black text-gray-900">Turnos</h3>
+                        <p class="text-sm text-gray-500 mt-2">Administrar turnos.</p>
+                    </a>
+
+                    <a href="{{ route('admin.club') }}"
+                       class="p-6 rounded-2xl border hover:border-lime-400 hover:bg-lime-50 transition">
+                        <h3 class="font-black text-gray-900">Club</h3>
+                        <p class="text-sm text-gray-500 mt-2">Configurar datos.</p>
+                    </a>
+                </div>
+            </div>
+
         </div>
     </div>
-</div>
+@endsection
