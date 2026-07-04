@@ -60,11 +60,11 @@ new #[Layout('layouts.app')] class extends Component
         $this->showForm = false;
     }
 
-    public function with(): array
+    public $sports = [];
+
+    public function mount(): void
     {
-        return [
-            'sports' => Sport::withCount('courts')->orderBy('name')->get(),
-        ];
+        $this->sports = Sport::withCount('courts')->orderBy('name')->get();
     }
 }; ?>
 

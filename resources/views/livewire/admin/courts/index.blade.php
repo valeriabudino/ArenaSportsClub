@@ -80,12 +80,13 @@ new #[Layout('layouts.app')] class extends Component
         $this->showForm = false;
     }
 
-    public function with(): array
+    public $courts = [];
+    public $sports = [];
+
+    public function mount(): void
     {
-        return [
-            'courts' => Court::with('sport')->orderBy('name')->get(),
-            'sports' => Sport::orderBy('name')->get(),
-        ];
+        $this->courts = Court::with('sport')->orderBy('name')->get();
+        $this->sports = Sport::orderBy('name')->get();
     }
 }; ?>
 

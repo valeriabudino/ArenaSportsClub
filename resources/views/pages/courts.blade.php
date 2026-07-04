@@ -3,15 +3,13 @@
 @section('content')
     <x-public.navbar />
 
-    <section class="min-h-screen bg-[#07110d] text-white flex items-center justify-center px-6">
-        <div class="text-center">
-            <h1 class="text-5xl font-black uppercase text-lime-400">
+    <section class="min-h-screen bg-[#07110d] text-white px-6 py-20">
+        <div class="max-w-6xl mx-auto">
+            <h1 class="text-5xl font-black uppercase text-lime-400 text-center mb-12">
                 Canchas
             </h1>
 
-            <p class="text-white/70 mt-4">
-                Esta sección se desarrollará próximamente.
-            </p>
+            <livewire:public.courts-list />
         </div>
     </section>
 

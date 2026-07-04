@@ -1,19 +1,11 @@
-@extends('layouts.public')
+@extends('layouts.app')
 
 @section('content')
-    <x-public.navbar />
-
-    <section class="min-h-screen bg-[#07110d] text-white flex items-center justify-center px-6">
-        <div class="text-center">
-            <h1 class="text-5xl font-black uppercase text-lime-400">
-                Canchas
-            </h1>
-
-            <p class="text-white/70 mt-4">
-                Esta sección se desarrollará próximamente.
-            </p>
+    <div class="py-12">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
+                <livewire:pages.reservations.index />
+            </div>
         </div>
-    </section>
-
-    <x-public.footer />
+    </div>
 @endsection
