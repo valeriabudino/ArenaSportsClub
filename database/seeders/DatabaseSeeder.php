@@ -23,6 +23,7 @@ class DatabaseSeeder extends Seeder
             'password' => bcrypt('arenasport'),
             'role' => 'admin',
         ]);
-         $this->call(SportSeeder::class);
+        $this->call(SportSeeder::class);
+        $this->call(CourtSeeder::class);
     }
 }
