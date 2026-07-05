@@ -35,4 +35,12 @@ return [
         ],
     ],
 
+    'mercadopago' => [
+        'access_token' => env('MP_ACCESS_TOKEN'),
+        'public_key' => env('MP_PUBLIC_KEY'),
+        // Solo para desarrollo local: URL publica (tunel) donde Mercado Pago puede
+        // notificar el webhook, ya que localhost no es alcanzable desde internet.
+        'webhook_url' => env('MP_WEBHOOK_URL'),
+    ],
+
 ];
