@@ -42,6 +42,7 @@ new #[Layout('layouts.admin')] class extends Component {
                 class="w-full rounded-xl border-gray-300 focus:border-lime-400 focus:ring-lime-400">
                 <option value="">Todos los estados</option>
                 <option value="available">Disponible</option>
+                <option value="pending_payment">Pago pendiente</option>
                 <option value="booked">Reservado</option>
                 <option value="cancelled">Cancelado</option>
             </select>
@@ -92,14 +93,17 @@ new #[Layout('layouts.admin')] class extends Component {
                             </td>
 
                             <td class="px-6 py-4 text-center">
-                                <span
-                                    class="px-3 py-1 rounded-full text-sm font-bold
-                                    {{ $turn->status === 'available'
-                                        ? 'bg-lime-100 text-lime-700'
-                                        : ($turn->status === 'booked'
-                                            ? 'bg-blue-100 text-blue-700'
-                                            : 'bg-red-100 text-red-700') }}">
-                                    {{ $turn->status === 'available' ? 'Disponible' : ($turn->status === 'booked' ? 'Reservado' : 'Cancelado') }}
+                                @php
+                                    $statusLabels = [
+                                        'available' => ['Disponible', 'bg-lime-100 text-lime-700'],
+                                        'pending_payment' => ['Pago pendiente', 'bg-yellow-100 text-yellow-700'],
+                                        'booked' => ['Reservado', 'bg-blue-100 text-blue-700'],
+                                    ];
+                                    [$label, $classes] = $statusLabels[$turn->status] ?? ['Cancelado', 'bg-red-100 text-red-700'];
+                                @endphp
+
+                                <span class="px-3 py-1 rounded-full text-sm font-bold {{ $classes }}">
+                                    {{ $label }}
                                 </span>
                             </td>
                         </tr>

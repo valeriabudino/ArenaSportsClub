@@ -4,17 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Turn extends Model
+class CourtReview extends Model
 {
     protected $fillable = [
         'court_id',
         'user_id',
-        'date',
-        'start_time',
-        'end_time',
-        'price',
-        'status',
-        'qr_code',
+        'rating',
+        'comment',
     ];
 
     public function court()
@@ -25,10 +21,5 @@ class Turn extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
-    }
-
-    public function payments()
-    {
-        return $this->hasMany(Payment::class);
     }
 }

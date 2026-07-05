@@ -1,11 +1,13 @@
-@extends('layouts.app')
+@extends('layouts.public')
 
 @section('content')
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
-                <livewire:pages.reservations.index />
-            </div>
+    <x-public.navbar />
+
+    <section class="min-h-screen bg-[#07110d] text-white px-6 pt-32 pb-20">
+        <div class="max-w-7xl mx-auto">
+            <livewire:pages.reservations.index />
         </div>
-    </div>
+    </section>
+
+    <x-public.footer />
 @endsection

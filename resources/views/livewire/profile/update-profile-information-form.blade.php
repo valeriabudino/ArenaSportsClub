@@ -64,40 +64,63 @@ new class extends Component
 
 <section>
     <header>
-        <h2 class="text-lg font-medium text-gray-900">
-            {{ __('Profile Information') }}
+        <h2 class="text-2xl font-black text-[#07110d]">
+            Información personal
         </h2>
 
-        <p class="mt-1 text-sm text-gray-600">
-            {{ __("Update your account's profile information and email address.") }}
+        <p class="mt-2 text-sm text-gray-500">
+            Actualizá tu nombre y correo electrónico.
         </p>
     </header>
 
-    <form wire:submit="updateProfileInformation" class="mt-6 space-y-6">
+    <form wire:submit="updateProfileInformation" class="mt-6 space-y-5">
         <div>
-            <x-input-label for="name" :value="__('Name')" />
-            <x-text-input wire:model="name" id="name" name="name" type="text" class="mt-1 block w-full" required autofocus autocomplete="name" />
+            <label class="font-bold text-sm text-gray-700">Nombre</label>
+
+            <input
+                wire:model="name"
+                id="name"
+                name="name"
+                type="text"
+                required
+                autofocus
+                autocomplete="name"
+                class="mt-2 w-full rounded-xl border-gray-300 focus:border-lime-400 focus:ring-lime-400"
+            >
+
             <x-input-error class="mt-2" :messages="$errors->get('name')" />
         </div>
 
         <div>
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input wire:model="email" id="email" name="email" type="email" class="mt-1 block w-full" required autocomplete="username" />
+            <label class="font-bold text-sm text-gray-700">Email</label>
+
+            <input
+                wire:model="email"
+                id="email"
+                name="email"
+                type="email"
+                required
+                autocomplete="username"
+                class="mt-2 w-full rounded-xl border-gray-300 focus:border-lime-400 focus:ring-lime-400"
+            >
+
             <x-input-error class="mt-2" :messages="$errors->get('email')" />
 
             @if (auth()->user() instanceof \Illuminate\Contracts\Auth\MustVerifyEmail && ! auth()->user()->hasVerifiedEmail())
-                <div>
-                    <p class="text-sm mt-2 text-gray-800">
-                        {{ __('Your email address is unverified.') }}
+                <div class="mt-3 rounded-xl bg-yellow-50 border border-yellow-200 p-4">
+                    <p class="text-sm text-yellow-800">
+                        Tu email todavía no fue verificado.
 
-                        <button wire:click.prevent="sendVerification" class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                            {{ __('Click here to re-send the verification email.') }}
+                        <button
+                            wire:click.prevent="sendVerification"
+                            class="font-bold underline hover:text-yellow-900">
+                            Reenviar verificación
                         </button>
                     </p>
 
                     @if (session('status') === 'verification-link-sent')
-                        <p class="mt-2 font-medium text-sm text-green-600">
-                            {{ __('A new verification link has been sent to your email address.') }}
+                        <p class="mt-2 font-bold text-sm text-lime-600">
+                            Se envió un nuevo enlace de verificación a tu correo.
                         </p>
                     @endif
                 </div>
@@ -105,10 +128,14 @@ new class extends Component
         </div>
 
         <div class="flex items-center gap-4">
-            <x-primary-button>{{ __('Save') }}</x-primary-button>
+            <button
+                type="submit"
+                class="bg-lime-400 text-black px-6 py-3 rounded-xl font-black hover:bg-lime-300 transition">
+                Guardar cambios
+            </button>
 
-            <x-action-message class="me-3" on="profile-updated">
-                {{ __('Saved.') }}
+            <x-action-message class="me-3 font-bold text-lime-600" on="profile-updated">
+                Guardado.
             </x-action-message>
         </div>
     </form>
