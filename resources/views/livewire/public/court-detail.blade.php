@@ -292,7 +292,7 @@ new class extends Component {
 
                 <div class="mt-6 flex justify-end gap-3">
                     <button type="button" x-on:click="$dispatch('close')"
-                        class="px-6 py-3 rounded-xl font-black border border-gray-300 hover:bg-gray-100 transition">
+                        class="px-6 py-3 rounded-xl font-black border border-gray-300 text-[#07110d] hover:bg-gray-100 transition">
                         Cancelar
                     </button>
 
