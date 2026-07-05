@@ -8,12 +8,12 @@ class Court extends Model
 {
     protected $fillable = [
         'sport_id',
-         'name', 
-         'description',
-         'price_per_hour',
-         'capacity',
-          'image', 
-          'is_active'
+        'name',
+        'description',
+        'price_per_hour',
+        'capacity',
+        'image',
+        'is_active'
     ];
 
     public function sport()
@@ -24,5 +24,10 @@ class Court extends Model
     public function turns()
     {
         return $this->hasMany(Turn::class);
+    }
+
+    public function reviews()
+    {
+        return $this->hasMany(CourtReview::class);
     }
 }

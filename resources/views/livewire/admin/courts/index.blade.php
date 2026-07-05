@@ -28,7 +28,7 @@ new #[Layout('layouts.admin')] class extends Component {
             'price_per_hour' => 'required|numeric|min:0',
             'capacity' => 'nullable|integer|min:1',
             'is_active' => 'boolean',
-            'image' => 'nullable|image|max:2048',
+            'image' => 'nullable|image|max:5120',
         ]);
 
         $imagePath = $this->currentImage;
