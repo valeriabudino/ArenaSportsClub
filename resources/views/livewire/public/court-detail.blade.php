@@ -2,6 +2,7 @@
 
 use App\Models\Court;
 use App\Models\Turn;
+use App\Services\MercadoPagoService;
 use Livewire\Volt\Component;
 
 new class extends Component {
@@ -29,10 +30,18 @@ new class extends Component {
 
         $turn->update([
             'user_id' => auth()->id(),
-            'status' => 'booked',
+            'status' => 'pending_payment',
         ]);
 
-        session()->flash('success', 'Turno reservado con exito');
+        try {
+            $result = app(MercadoPagoService::class)->createPreference($turn);
+
+            return redirect()->away($result['checkout_url']);
+        } catch (\Throwable $e) {
+            $turn->update(['user_id' => null, 'status' => 'available']);
+            session()->flash('error', 'No se pudo iniciar el pago con Mercado Pago. Intentá nuevamente.');
+            report($e);
+        }
     }
 
     public function with(): array
@@ -76,6 +85,7 @@ new class extends Component {
         @forelse ($turns as $turn)
             @php
                 $isAvailable = $turn->status === 'available';
+                $isPendingPayment = $turn->status === 'pending_payment';
                 $isBooked = $turn->status === 'booked';
             @endphp
             <div class="bg-white/10 rounded-lg p-4 text-center @if ($isAvailable) border border-lime-400 @else opacity-50 @endif">
@@ -86,6 +96,8 @@ new class extends Component {
                     @auth
                         <button wire:click="reserve({{ $turn->id }})" class="mt-2 w-full px-3 py-1 bg-lime-400 text-gray-900 rounded font-bold text-sm hover:bg-lime-300 transition">Reservar</button>
                     @endauth
+                @elseif ($isPendingPayment)
+                    <span class="text-yellow-400 text-sm">Pago pendiente</span>
                 @elseif ($isBooked)
                     <span class="text-blue-400 text-sm">Reservado</span>
                 @else
