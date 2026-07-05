@@ -3,6 +3,7 @@
 use App\Models\Court;
 use App\Models\CourtReview;
 use App\Models\Turn;
+use App\Services\MercadoPagoService;
 use Livewire\Volt\Component;
 
 new class extends Component {
@@ -32,10 +33,18 @@ new class extends Component {
 
         $turn->update([
             'user_id' => auth()->id(),
-            'status' => 'booked',
+            'status' => 'pending_payment',
         ]);
 
-        session()->flash('success', 'Turno reservado con exito');
+        try {
+            $result = app(MercadoPagoService::class)->createPreference($turn);
+
+            return redirect()->away($result['checkout_url']);
+        } catch (\Throwable $e) {
+            $turn->update(['user_id' => null, 'status' => 'available']);
+            session()->flash('error', 'No se pudo iniciar el pago con Mercado Pago. Intentá nuevamente.');
+            report($e);
+        }
     }
 
     public function saveReview(): void
@@ -168,6 +177,7 @@ new class extends Component {
             @forelse ($turns as $turn)
                 @php
                     $isAvailable = $turn->status === 'available';
+                    $isPendingPayment = $turn->status === 'pending_payment';
                     $isBooked = $turn->status === 'booked';
                 @endphp
 
@@ -193,7 +203,7 @@ new class extends Component {
                             @auth
                                 <button wire:click="reserve({{ $turn->id }})"
                                     class="mt-4 w-full bg-lime-400 text-black rounded-xl py-3 font-black hover:bg-lime-300 transition">
-                                    Reservar
+                                    Pagar con Mercado Pago
                                 </button>
                             @else
                                 <a href="{{ route('login') }}"
@@ -201,6 +211,11 @@ new class extends Component {
                                     Iniciar sesión
                                 </a>
                             @endauth
+                        @elseif ($isPendingPayment)
+                            <span
+                                class="inline-block bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full text-sm font-bold">
+                                Pago pendiente
+                            </span>
                         @elseif ($isBooked)
                             <span
                                 class="inline-block bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm font-bold">
