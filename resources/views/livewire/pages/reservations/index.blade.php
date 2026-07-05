@@ -8,16 +8,36 @@ new class extends Component {
     {
         $turn = Turn::where('id', $turnId)
             ->where('user_id', auth()->id())
-            ->where('status', 'booked')
+            ->whereIn('status', ['booked', 'pending_payment'])
             ->first();
 
-        if ($turn) {
-            $turn->update([
-                'status' => 'available',
-                'user_id' => null,
-            ]);
+        if (!$turn) {
+            return;
+        }
 
+        $approvedPayment = $turn->status === 'booked'
+            ? $turn->payments()->where('status', 'approved')->latest()->first()
+            : null;
+
+        $turn->update([
+            'status' => 'available',
+            'user_id' => null,
+        ]);
+
+        if (!$approvedPayment) {
             session()->flash('success', 'Reserva cancelada correctamente.');
+            return;
+        }
+
+        $turnStart = \Carbon\Carbon::parse("{$turn->date} {$turn->start_time}");
+        $hoursUntilStart = now()->diffInHours($turnStart, false);
+
+        if ($hoursUntilStart >= 24) {
+            $approvedPayment->update(['status' => 'refund_pending']);
+            session()->flash('success', 'Reserva cancelada. Como fue con más de 1 día de anticipación, el club te reembolsará el monto pagado.');
+        } else {
+            $approvedPayment->update(['status' => 'cancelled_no_refund']);
+            session()->flash('success', 'Reserva cancelada. Como fue con menos de 1 día de anticipación, no corresponde reembolso.');
         }
     }
 
@@ -104,13 +124,14 @@ new class extends Component {
                     </div>
 
                     <div class="md:text-right">
-                        @if ($r->status === 'booked')
-                            <span class="inline-block bg-blue-100 text-blue-700 px-4 py-2 rounded-full font-black text-sm">
-                                Reservado
+                        @if ($r->status === 'booked' || $r->status === 'pending_payment')
+                            <span class="inline-block px-4 py-2 rounded-full font-black text-sm
+                                {{ $r->status === 'booked' ? 'bg-blue-100 text-blue-700' : 'bg-yellow-100 text-yellow-700' }}">
+                                {{ $r->status === 'booked' ? 'Reservado' : 'Pago pendiente' }}
                             </span>
 
                             <button wire:click="cancel({{ $r->id }})"
-                                    wire:confirm="¿Cancelar esta reserva?"
+                                    wire:confirm="¿Cancelar esta reserva? Si faltan menos de 24hs para el turno no corresponde reembolso."
                                     class="mt-4 block w-full md:w-auto bg-red-500 text-white px-6 py-3 rounded-xl font-black hover:bg-red-600 transition">
                                 Cancelar
                             </button>
