@@ -3,11 +3,13 @@
 use App\Models\Court;
 use App\Models\CourtReview;
 use App\Models\Turn;
+use App\Services\MercadoPagoService;
 use Livewire\Volt\Component;
 
 new class extends Component {
     public Court $court;
     public $selectedDate = '';
+    public $selectedTurnId = null;
     public $rating = 5;
     public $comment = '';
 
@@ -15,6 +17,11 @@ new class extends Component {
     {
         $this->court = $court->load('sport');
         $this->selectedDate = now()->toDateString();
+    }
+
+    public function selectTurn($turnId)
+    {
+        $this->selectedTurnId = $turnId;
     }
 
     public function reserve($turnId)
@@ -26,16 +33,26 @@ new class extends Component {
         $turn = Turn::where('id', $turnId)->where('status', 'available')->first();
 
         if (!$turn) {
+            $this->dispatch('close-modal', 'confirmar-reserva');
             session()->flash('error', 'El turno ya no está disponible');
             return;
         }
 
         $turn->update([
             'user_id' => auth()->id(),
-            'status' => 'booked',
+            'status' => 'pending_payment',
         ]);
 
-        session()->flash('success', 'Turno reservado con exito');
+        try {
+            $result = app(MercadoPagoService::class)->createPreference($turn);
+
+            return redirect()->away($result['checkout_url']);
+        } catch (\Throwable $e) {
+            $turn->update(['user_id' => null, 'status' => 'available']);
+            $this->dispatch('close-modal', 'confirmar-reserva');
+            session()->flash('error', 'No se pudo iniciar el pago con Mercado Pago. Intentá nuevamente.');
+            report($e);
+        }
     }
 
     public function saveReview(): void
@@ -67,6 +84,7 @@ new class extends Component {
     {
         return [
             'turns' => Turn::where('court_id', $this->court->id)->where('date', $this->selectedDate)->orderBy('start_time')->get(),
+            'selectedTurn' => $this->selectedTurnId ? Turn::with('court')->find($this->selectedTurnId) : null,
 
             'reviews' => $this->court->reviews()->with('user')->latest()->get(),
             'averageRating' => round($this->court->reviews()->avg('rating'), 1),
@@ -168,6 +186,7 @@ new class extends Component {
             @forelse ($turns as $turn)
                 @php
                     $isAvailable = $turn->status === 'available';
+                    $isPendingPayment = $turn->status === 'pending_payment';
                     $isBooked = $turn->status === 'booked';
                 @endphp
 
@@ -191,7 +210,10 @@ new class extends Component {
                             </span>
 
                             @auth
-                                <button wire:click="reserve({{ $turn->id }})"
+                                <button type="button"
+                                    x-data=""
+                                    x-on:click="$dispatch('open-modal', 'confirmar-reserva')"
+                                    wire:click="selectTurn({{ $turn->id }})"
                                     class="mt-4 w-full bg-lime-400 text-black rounded-xl py-3 font-black hover:bg-lime-300 transition">
                                     Reservar
                                 </button>
@@ -201,6 +223,11 @@ new class extends Component {
                                     Iniciar sesión
                                 </a>
                             @endauth
+                        @elseif ($isPendingPayment)
+                            <span
+                                class="inline-block bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full text-sm font-bold">
+                                Pago pendiente
+                            </span>
                         @elseif ($isBooked)
                             <span
                                 class="inline-block bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm font-bold">
@@ -226,6 +253,57 @@ new class extends Component {
             @endforelse
         </div>
     </div>
+
+    {{-- Confirmacion de reserva --}}
+    <x-modal name="confirmar-reserva" focusable>
+        @if ($selectedTurn)
+            <div class="p-8">
+                <h2 class="text-2xl font-black text-[#07110d]">
+                    Confirmar reserva
+                </h2>
+
+                <p class="mt-2 text-sm text-gray-600">
+                    Revisá los datos antes de pagar con Mercado Pago.
+                </p>
+
+                <div class="mt-6 bg-gray-100 rounded-2xl p-5 space-y-3 text-[#07110d]">
+                    <div class="flex justify-between">
+                        <span class="font-bold text-gray-500">Cancha</span>
+                        <span class="font-black">{{ $selectedTurn->court->name }}</span>
+                    </div>
+
+                    <div class="flex justify-between">
+                        <span class="font-bold text-gray-500">Fecha</span>
+                        <span class="font-black">{{ \Carbon\Carbon::parse($selectedTurn->date)->format('d/m/Y') }}</span>
+                    </div>
+
+                    <div class="flex justify-between">
+                        <span class="font-bold text-gray-500">Horario</span>
+                        <span class="font-black">
+                            {{ substr($selectedTurn->start_time, 0, 5) }} - {{ substr($selectedTurn->end_time, 0, 5) }}
+                        </span>
+                    </div>
+
+                    <div class="flex justify-between text-lg pt-2 border-t border-gray-200">
+                        <span class="font-bold text-gray-500">Total a pagar</span>
+                        <span class="font-black text-lime-500">${{ number_format($selectedTurn->price, 0, ',', '.') }}</span>
+                    </div>
+                </div>
+
+                <div class="mt-6 flex justify-end gap-3">
+                    <button type="button" x-on:click="$dispatch('close')"
+                        class="px-6 py-3 rounded-xl font-black border border-gray-300 text-[#07110d] hover:bg-gray-100 transition">
+                        Cancelar
+                    </button>
+
+                    <button wire:click="reserve({{ $selectedTurn->id }})"
+                        class="bg-lime-400 text-black px-6 py-3 rounded-xl font-black hover:bg-lime-300 transition">
+                        Pagar con Mercado Pago
+                    </button>
+                </div>
+            </div>
+        @endif
+    </x-modal>
 
     {{-- Comentarios --}}
     <div class="mt-16 bg-white rounded-3xl p-8 shadow-2xl text-[#07110d]">
