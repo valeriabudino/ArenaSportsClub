@@ -1,7 +1,5 @@
-<section
-    class="relative min-h-screen flex items-center bg-cover bg-center overflow-hidden"
-    style="background-image: url('{{ asset('images/hero-arena.jpg') }}')"
->
+<section class="relative min-h-screen flex items-center bg-cover bg-center overflow-hidden"
+    style="background-image: url('{{ asset('images/hero-arena.jpg') }}')">
     <div class="absolute inset-0 bg-black/60"></div>
     <div class="absolute inset-0 bg-gradient-to-r from-black/90 via-black/55 to-black/20"></div>
 
@@ -18,13 +16,13 @@
             </p>
 
             <div class="flex flex-wrap gap-4 mt-8">
-                <a href="#"
-                   class="bg-lime-400 text-black px-7 py-4 rounded-md font-black uppercase hover:bg-lime-300 transition">
+                <a href="{{ route('courts.index') }}"
+                    class="bg-lime-400 text-black px-8 py-4 rounded-xl font-black uppercase hover:bg-lime-300 transition">
                     Reservar ahora
                 </a>
 
-                <a href="#"
-                   class="border border-white/50 text-white px-7 py-4 rounded-md font-black uppercase hover:border-lime-400 hover:text-lime-400 transition">
+                <a href="#canchas"
+                    class="border border-white/40 text-white px-8 py-4 rounded-xl font-black uppercase hover:border-lime-400 hover:text-lime-400 transition">
                     Ver canchas
                 </a>
             </div>

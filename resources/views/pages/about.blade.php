@@ -88,7 +88,7 @@
                             GitHub
                         </a>
 
-                        <a href="#" target="_blank" rel="noopener noreferrer"
+                        <a href="https://www.linkedin.com/in/valeria-budino-fernandez/" target="_blank" rel="noopener noreferrer"
                             class="font-black text-sm hover:text-lime-600">
                             LinkedIn
                         </a>
