@@ -8,6 +8,7 @@ return [
         'string' => 'El campo :attribute debe tener al menos :min caracteres.',
     ],
     'max' => [
+        'file' => 'El archivo :attribute no debe superar los :max kilobytes.',
         'string' => 'El campo :attribute no debe superar los :max caracteres.',
     ],
     'unique' => 'El :attribute ya está registrado.',
@@ -16,6 +17,7 @@ return [
         'name' => 'nombre',
         'email' => 'email',
         'phone' => 'WhatsApp',
+        'image' => 'imagen',
         'password' => 'contraseña',
         'password_confirmation' => 'confirmación de contraseña',
         'form.email' => 'email',
