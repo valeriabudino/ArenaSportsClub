@@ -7,7 +7,6 @@
         <div class="hidden md:flex gap-8 text-white font-semibold">
             <a href="{{ route('home') }}" class="hover:text-lime-400 transition">Inicio</a>
             <a href="{{ route('courts.index') }}" class="hover:text-lime-400 transition">Canchas</a>
-            <a href="{{ route('reservations.index') }}" class="hover:text-lime-400 transition">Reservas</a>
             <a href="{{ route('tournaments.index') }}" class="hover:text-lime-400 transition">Torneos</a>
             <a href="{{ route('about') }}" class="hover:text-lime-400 transition">Nosotros</a>
             <a href="{{ route('contact') }}" class="hover:text-lime-400 transition">Contacto</a>
