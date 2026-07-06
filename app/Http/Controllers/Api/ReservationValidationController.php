@@ -14,7 +14,7 @@ class ReservationValidationController extends Controller
         $qrCode = $request->input('qr_code');
 
         $turn = $qrCode
-            ? Turn::where('qr_code', $qrCode)->where('status', 'booked')->first()
+            ? Turn::with('user')->where('qr_code', $qrCode)->where('status', 'booked')->first()
             : null;
 
         if (! $turn) {
@@ -34,6 +34,7 @@ class ReservationValidationController extends Controller
         return response()->json([
             'valido' => true,
             'mensaje' => 'Reserva confirmada. Bienvenido.',
+            'cliente' => $turn->user->name,
         ]);
     }
 

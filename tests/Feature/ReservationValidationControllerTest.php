@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Models\Court;
 use App\Models\Sport;
 use App\Models\Turn;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Str;
 use Tests\TestCase;
@@ -23,6 +24,7 @@ class ReservationValidationControllerTest extends TestCase
 
         return Turn::create(array_merge([
             'court_id' => $court->id,
+            'user_id' => User::factory()->create(['name' => 'Juan Perez'])->id,
             'date' => now()->toDateString(),
             'start_time' => now()->format('H:i:s'),
             'end_time' => now()->addHour()->format('H:i:s'),
@@ -44,6 +46,17 @@ class ReservationValidationControllerTest extends TestCase
         $response->assertOk()->assertJson([
             'valido' => true,
             'mensaje' => 'Reserva confirmada. Bienvenido.',
+            'cliente' => 'Juan Perez',
+        ]);
+    }
+
+    public function test_does_not_include_cliente_when_rejected(): void
+    {
+        $response = $this->postJson('/api/reservations/validate', ['qr_code' => 'no-existe']);
+
+        $response->assertExactJson([
+            'valido' => false,
+            'mensaje' => 'Reserva impaga o fuera de horario permitido.',
         ]);
     }
 
