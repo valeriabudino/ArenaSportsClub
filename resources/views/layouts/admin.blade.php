@@ -94,6 +94,15 @@
 
 
 
+                <a href="{{ route('admin.reviews.index') }}"
+                    class="block px-4 py-3 rounded-xl hover:bg-lime-400 hover:text-black font-bold transition">
+
+                    Comentarios
+
+                </a>
+
+
+
                 <a href="{{ route('admin.club') }}"
                     class="block px-4 py-3 rounded-xl hover:bg-lime-400 hover:text-black font-bold transition">
 
