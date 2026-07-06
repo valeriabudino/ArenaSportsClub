@@ -4,15 +4,16 @@ namespace App\Services;
 
 use App\Models\Payment;
 use App\Models\Turn;
-use MercadoPago\Item;
-use MercadoPago\Preference;
-use MercadoPago\SDK;
+use MercadoPago\Client\Preference\PreferenceClient;
+use MercadoPago\MercadoPagoConfig;
 
 class MercadoPagoService
 {
     public function __construct()
     {
-        SDK::setAccessToken(config('services.mercadopago.access_token'));
+        MercadoPagoConfig::setAccessToken(
+            config('services.mercadopago.access_token')
+        );
     }
 
     /**
@@ -30,27 +31,30 @@ class MercadoPagoService
             'status' => 'pending',
         ]);
 
-        $item = new Item();
-        $item->title = "Turno {$turn->court->name} - {$turn->date} {$turn->start_time}";
-        $item->quantity = 1;
-        $item->unit_price = (float) $turn->price;
-        $item->currency_id = 'ARS';
+        $client = new PreferenceClient();
 
-        $preference = new Preference();
-        $preference->items = [$item];
-        $preference->external_reference = (string) $payment->id;
-        $preference->notification_url = config('services.mercadopago.webhook_url') ?: route('webhooks.mercadopago');
-        $preference->back_urls = [
-            'success' => route('payments.success'),
-            'pending' => route('payments.pending'),
-            'failure' => route('payments.failure'),
-        ];
-        // auto_return requiere back_urls publicas (https, no localhost); en local lo omitimos
-        // y el usuario vuelve manualmente con el boton de Mercado Pago tras pagar.
-        if (! str_contains(config('app.url'), 'localhost') && ! str_contains(config('app.url'), '127.0.0.1')) {
-            $preference->auto_return = 'approved';
-        }
-        $preference->save();
+$preference = $client->create([
+    "items" => [
+        [
+            "title" => "Turno {$turn->court->name} - {$turn->date} {$turn->start_time}",
+            "quantity" => 1,
+            "unit_price" => (float) $turn->price,
+            "currency_id" => "ARS",
+        ]
+    ],
+
+    "external_reference" => (string) $payment->id,
+
+    "notification_url" =>
+        config('services.mercadopago.webhook_url')
+        ?: route('webhooks.mercadopago'),
+
+    "back_urls" => [
+        "success" => route('payments.success'),
+        "pending" => route('payments.pending'),
+        "failure" => route('payments.failure'),
+    ],
+]);
 
         $payment->update(['mp_preference_id' => $preference->id]);
 
