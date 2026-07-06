@@ -130,6 +130,30 @@ new class extends Component {
                                 {{ $r->status === 'booked' ? 'Reservado' : 'Pago pendiente' }}
                             </span>
 
+                            @if ($r->status === 'booked' && $r->qr_code)
+                                @php
+                                    $qrStart = \Carbon\Carbon::parse("{$r->date} {$r->start_time}")->subMinutes(15);
+                                    $qrEnd = \Carbon\Carbon::parse("{$r->date} {$r->end_time}")->subMinutes(15);
+                                    $qrState = now()->lessThan($qrStart)
+                                        ? 'no_habilitado'
+                                        : (now()->greaterThan($qrEnd) ? 'expirado' : 'activo');
+                                    $qrStateLabels = [
+                                        'no_habilitado' => 'Se habilita 15 min antes del turno',
+                                        'activo' => 'Mostrá este código en el ingreso',
+                                        'expirado' => 'El código ya expiró',
+                                    ];
+                                @endphp
+
+                                <div class="mt-4 flex flex-col items-center md:items-end">
+                                    <img src="{{ route('reservations.qr', $r) }}" alt="Código QR de acceso"
+                                        class="w-32 h-32 {{ $qrState === 'activo' ? '' : 'opacity-40 grayscale' }}">
+
+                                    <p class="text-xs text-gray-400 mt-1">
+                                        {{ $qrStateLabels[$qrState] }}
+                                    </p>
+                                </div>
+                            @endif
+
                             <button wire:click="cancel({{ $r->id }})"
                                     wire:confirm="¿Cancelar esta reserva? Si faltan menos de 24hs para el turno no corresponde reembolso."
                                     class="mt-4 block w-full md:w-auto bg-red-500 text-white px-6 py-3 rounded-xl font-black hover:bg-red-600 transition">

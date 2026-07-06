@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\MercadoPagoController;
+use App\Http\Controllers\TurnQrController;
 use Illuminate\Support\Facades\Route;
 use Livewire\Volt\Volt;
 
@@ -11,6 +12,15 @@ Route::get('/canchas/{court}', function (App\Models\Court $court) {
 })->name('courts.show');
 
 Route::view('/reservas', 'pages.reservations')->middleware(['auth'])->name('reservations.index');
+
+Route::get('/mis-reservas/{turn}/qr', [TurnQrController::class, 'show'])
+    ->middleware(['auth'])
+    ->name('reservations.qr');
+
+// Sin sesion, protegida por firma temporal (usada como mediaUrl en recordatorios de WhatsApp).
+Route::get('/mis-reservas/{turn}/qr-firmado', [TurnQrController::class, 'showSigned'])
+    ->middleware(['signed'])
+    ->name('reservations.qr.signed');
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/pago/exito', [MercadoPagoController::class, 'success'])->name('payments.success');

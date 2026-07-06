@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Payment;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
 use MercadoPago\Payment as MpPayment;
 use MercadoPago\SDK;
 
@@ -40,7 +39,7 @@ class MercadoPagoController extends Controller
         $turn = $payment->turn;
 
         if ($mpPayment->status === 'approved') {
-            $turn->update(['status' => 'booked', 'qr_code' => Str::uuid()]);
+            $turn->update(['status' => 'booked']);
         } elseif (in_array($mpPayment->status, ['rejected', 'cancelled'])) {
             $turn->update(['status' => 'available', 'user_id' => null]);
         }
