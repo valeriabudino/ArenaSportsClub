@@ -43,4 +43,12 @@ return [
         'webhook_url' => env('MP_WEBHOOK_URL'),
     ],
 
+    'twilio' => [
+        // Account SID (AC...) y Auth Token, del Dashboard principal de la cuenta.
+        'sid' => env('TWILIO_SID'),
+        'token' => env('TWILIO_AUTH_TOKEN'),
+        // Numero de WhatsApp habilitado en Twilio, formato E.164 (ej. +14155238886).
+        'whatsapp_from' => env('TWILIO_WHATSAPP_FROM'),
+    ],
+
 ];

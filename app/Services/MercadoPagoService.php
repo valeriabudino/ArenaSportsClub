@@ -60,7 +60,10 @@ $preference = $client->create([
 
         return [
             'payment' => $payment,
-            'checkout_url' => $preference->sandbox_init_point ?: $preference->init_point,
+            // sandbox_init_point es un dominio legacy que Mercado Pago dejo de
+            // sostener; init_point ya sirve la experiencia de prueba o de
+            // produccion segun las credenciales usadas para crear la preferencia.
+            'checkout_url' => $preference->init_point,
         ];
     }
 }

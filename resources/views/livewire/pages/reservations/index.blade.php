@@ -1,9 +1,31 @@
 <?php
 
 use App\Models\Turn;
+use App\Services\MercadoPagoService;
 use Livewire\Volt\Component;
 
 new class extends Component {
+    public function pay($turnId)
+    {
+        $turn = Turn::where('id', $turnId)
+            ->where('user_id', auth()->id())
+            ->where('status', 'pending_payment')
+            ->first();
+
+        if (!$turn) {
+            return;
+        }
+
+        try {
+            $result = app(MercadoPagoService::class)->createPreference($turn);
+
+            return redirect()->away($result['checkout_url']);
+        } catch (\Throwable $e) {
+            session()->flash('error', 'No se pudo iniciar el pago con Mercado Pago. Intentá nuevamente.');
+            report($e);
+        }
+    }
+
     public function cancel($turnId)
     {
         $turn = Turn::where('id', $turnId)
@@ -76,6 +98,12 @@ new class extends Component {
         </div>
     @endif
 
+    @if (session('error'))
+        <div class="mb-6 bg-red-500 text-white px-5 py-4 rounded-xl font-bold">
+            {{ session('error') }}
+        </div>
+    @endif
+
     <div class="grid gap-6">
         @forelse ($reservations as $r)
             <article class="bg-white rounded-3xl overflow-hidden shadow-2xl grid md:grid-cols-[260px_1fr] text-[#07110d]">
@@ -129,6 +157,37 @@ new class extends Component {
                                 {{ $r->status === 'booked' ? 'bg-blue-100 text-blue-700' : 'bg-yellow-100 text-yellow-700' }}">
                                 {{ $r->status === 'booked' ? 'Reservado' : 'Pago pendiente' }}
                             </span>
+
+                            @if ($r->status === 'booked' && $r->qr_code)
+                                @php
+                                    $qrStart = \Carbon\Carbon::parse("{$r->date} {$r->start_time}")->subMinutes(15);
+                                    $qrEnd = \Carbon\Carbon::parse("{$r->date} {$r->end_time}")->subMinutes(15);
+                                    $qrState = now()->lessThan($qrStart)
+                                        ? 'no_habilitado'
+                                        : (now()->greaterThan($qrEnd) ? 'expirado' : 'activo');
+                                    $qrStateLabels = [
+                                        'no_habilitado' => 'Se habilita 15 min antes del turno',
+                                        'activo' => 'Mostrá este código en el ingreso',
+                                        'expirado' => 'El código ya expiró',
+                                    ];
+                                @endphp
+
+                                <div class="mt-4 flex flex-col items-center md:items-end">
+                                    <img src="{{ route('reservations.qr', $r) }}" alt="Código QR de acceso"
+                                        class="w-32 h-32 {{ $qrState === 'activo' ? '' : 'opacity-40 grayscale' }}">
+
+                                    <p class="text-xs text-gray-400 mt-1">
+                                        {{ $qrStateLabels[$qrState] }}
+                                    </p>
+                                </div>
+                            @endif
+
+                            @if ($r->status === 'pending_payment')
+                                <button wire:click="pay({{ $r->id }})"
+                                        class="mt-4 block w-full md:w-auto bg-lime-400 text-black px-6 py-3 rounded-xl font-black hover:bg-lime-300 transition">
+                                    Pagar
+                                </button>
+                            @endif
 
                             <button wire:click="cancel({{ $r->id }})"
                                     wire:confirm="¿Cancelar esta reserva? Si faltan menos de 24hs para el turno no corresponde reembolso."
