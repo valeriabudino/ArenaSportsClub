@@ -25,7 +25,7 @@ new #[Layout('layouts.admin')] class extends Component {
             'sport_id' => 'required|exists:sports,id',
             'name' => 'required|string|max:100',
             'description' => 'nullable|string',
-            'price_per_hour' => 'required|numeric|min:0',
+            'price_per_hour' => 'required|numeric|min:0.01',
             'capacity' => 'nullable|integer|min:1',
             'is_active' => 'boolean',
             'image' => 'nullable|image|max:5120',

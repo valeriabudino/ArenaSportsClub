@@ -15,7 +15,7 @@ class CourtReview extends Model
 
     public function court()
     {
-        return $this->belongsTo(Court::class);
+        return $this->belongsTo(Court::class)->withTrashed();
     }
 
     public function user()
