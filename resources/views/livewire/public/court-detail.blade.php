@@ -4,6 +4,7 @@ use App\Models\Court;
 use App\Models\CourtReview;
 use App\Models\Turn;
 use App\Services\MercadoPagoService;
+use Illuminate\Support\Facades\DB;
 use Livewire\Volt\Component;
 
 new class extends Component {
@@ -30,18 +31,26 @@ new class extends Component {
             return redirect()->route('login');
         }
 
-        $turn = Turn::where('id', $turnId)->where('status', 'available')->first();
+        $turn = DB::transaction(function () use ($turnId) {
+            $turn = Turn::where('id', $turnId)->where('status', 'available')->lockForUpdate()->first();
+
+            if (!$turn) {
+                return null;
+            }
+
+            $turn->update([
+                'user_id' => auth()->id(),
+                'status' => 'pending_payment',
+            ]);
+
+            return $turn;
+        });
 
         if (!$turn) {
             $this->dispatch('close-modal', 'confirmar-reserva');
             session()->flash('error', 'El turno ya no está disponible');
             return;
         }
-
-        $turn->update([
-            'user_id' => auth()->id(),
-            'status' => 'pending_payment',
-        ]);
 
         try {
             $result = app(MercadoPagoService::class)->createPreference($turn);
