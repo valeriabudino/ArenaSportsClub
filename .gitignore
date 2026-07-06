@@ -18,6 +18,8 @@
 /public/storage
 /storage/*.key
 /storage/pail
+/database/*.sqlite
+/database/*.sqlite-journal
 /vendor
 Homestead.json
 Homestead.yaml
