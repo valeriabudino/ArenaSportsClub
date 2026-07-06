@@ -14,6 +14,12 @@ class Turn extends Model
         'end_time',
         'price',
         'status',
+        'qr_code',
+        'reminder_sent_at',
+    ];
+
+    protected $casts = [
+        'reminder_sent_at' => 'datetime',
     ];
 
     public function court()
@@ -24,5 +30,10 @@ class Turn extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function payments()
+    {
+        return $this->hasMany(Payment::class);
     }
 }

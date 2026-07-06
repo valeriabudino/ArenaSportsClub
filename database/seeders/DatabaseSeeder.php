@@ -12,17 +12,27 @@ class DatabaseSeeder extends Seeder
 
     public function run(): void
     {
-        User::factory()->create([
-            'name' => 'Usuario de Prueba',
-            'email' => 'test@example.com',
-        ]);
+        User::firstOrCreate(
+            ['email' => 'test@example.com'],
+            [
+                'name' => 'Usuario de Prueba',
+                'password' => bcrypt('password'),
+            ]
+        );
 
-        User::factory()->create([
-            'name' => 'Admin',
-            'email' => 'arenasportsclub@email.com',
-            'password' => bcrypt('arenasport'),
-            'role' => 'admin',
+        User::firstOrCreate(
+            ['email' => 'arenasportsclub@email.com'],
+            [
+                'name' => 'Admin',
+                'password' => bcrypt('arenasport'),
+                'role' => 'admin',
+            ]
+        );
+
+        $this->call([
+            SportSeeder::class,
+            ClubSettingSeeder::class,
+            CourtSeeder::class,
         ]);
-         $this->call(SportSeeder::class);
     }
 }

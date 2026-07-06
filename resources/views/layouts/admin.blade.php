@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>ArenaSportsClub Admin</title>
-
+    <link rel="icon" type="image/png" href="{{ asset('favicon.png') }}">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
@@ -71,6 +71,33 @@
                     class="block px-4 py-3 rounded-xl hover:bg-lime-400 hover:text-black font-bold transition">
 
                     Turnos
+
+                </a>
+
+
+
+                <a href="{{ route('admin.refunds') }}"
+                    class="block px-4 py-3 rounded-xl hover:bg-lime-400 hover:text-black font-bold transition">
+
+                    Reembolsos
+
+                </a>
+
+
+
+                <a href="{{ route('admin.access-logs.index') }}"
+                    class="block px-4 py-3 rounded-xl hover:bg-lime-400 hover:text-black font-bold transition">
+
+                    Accesos
+
+                </a>
+
+
+
+                <a href="{{ route('admin.reviews.index') }}"
+                    class="block px-4 py-3 rounded-xl hover:bg-lime-400 hover:text-black font-bold transition">
+
+                    Comentarios
 
                 </a>
 

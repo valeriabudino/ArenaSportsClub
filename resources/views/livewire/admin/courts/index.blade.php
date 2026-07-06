@@ -4,13 +4,17 @@ use App\Models\Court;
 use App\Models\Sport;
 use Livewire\Attributes\Layout;
 use Livewire\Volt\Component;
+use Livewire\WithFileUploads;
 
 new #[Layout('layouts.admin')] class extends Component {
+    use WithFileUploads;
     public $sport_id = '';
     public $name = '';
     public $description = '';
     public $price_per_hour = '';
     public $capacity = '';
+    public $image;
+    public $currentImage = '';
     public $is_active = true;
     public $editingId = null;
     public $showForm = false;
@@ -24,13 +28,20 @@ new #[Layout('layouts.admin')] class extends Component {
             'price_per_hour' => 'required|numeric|min:0',
             'capacity' => 'nullable|integer|min:1',
             'is_active' => 'boolean',
+            'image' => 'nullable|image|max:5120',
         ]);
 
+        $imagePath = $this->currentImage;
+
+        if ($this->image) {
+            $imagePath = $this->image->store('courts', 'public');
+        }
         if ($this->editingId) {
             Court::findOrFail($this->editingId)->update([
                 'sport_id' => $this->sport_id,
                 'name' => $this->name,
                 'description' => $this->description,
+                'image' => $imagePath,
                 'price_per_hour' => $this->price_per_hour,
                 'capacity' => $this->capacity ?: null,
                 'is_active' => $this->is_active,
@@ -40,6 +51,7 @@ new #[Layout('layouts.admin')] class extends Component {
                 'sport_id' => $this->sport_id,
                 'name' => $this->name,
                 'description' => $this->description,
+                'image' => $imagePath,
                 'price_per_hour' => $this->price_per_hour,
                 'capacity' => $this->capacity ?: null,
                 'is_active' => $this->is_active,
@@ -56,6 +68,7 @@ new #[Layout('layouts.admin')] class extends Component {
         $this->sport_id = $court->sport_id;
         $this->name = $court->name;
         $this->description = $court->description;
+        $this->currentImage = $court->image;
         $this->price_per_hour = $court->price_per_hour;
         $this->capacity = $court->capacity;
         $this->is_active = $court->is_active;
@@ -77,6 +90,8 @@ new #[Layout('layouts.admin')] class extends Component {
         $this->is_active = true;
         $this->editingId = null;
         $this->showForm = false;
+        $this->image = null;
+        $this->currentImage = '';
     }
 
     public $courts = [];
@@ -245,7 +260,33 @@ new #[Layout('layouts.admin')] class extends Component {
 
                     </div>
 
+                    {{-- Imagen --}}
+                    <div class="md:col-span-2">
+                        <label class="font-bold text-sm text-gray-700">
+                            Imagen de la cancha
+                        </label>
 
+                        <input wire:model="image" type="file" accept="image/*"
+                            class="mt-2 w-full rounded-xl border border-gray-300 bg-white p-3 focus:border-lime-400 focus:ring-lime-400">
+
+                        @error('image')
+                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                        @enderror
+
+                        @if ($image)
+                            <div class="mt-4">
+                                <p class="text-sm font-bold text-gray-500 mb-2">Vista previa:</p>
+                                <img src="{{ $image->temporaryUrl() }}"
+                                    class="h-32 w-56 object-cover rounded-xl border">
+                            </div>
+                        @elseif ($currentImage)
+                            <div class="mt-4">
+                                <p class="text-sm font-bold text-gray-500 mb-2">Imagen actual:</p>
+                                <img src="{{ asset('storage/' . $currentImage) }}"
+                                    class="h-32 w-56 object-cover rounded-xl border">
+                            </div>
+                        @endif
+                    </div>
 
 
                     {{-- Activa --}}
@@ -298,6 +339,7 @@ new #[Layout('layouts.admin')] class extends Component {
                 <thead class="bg-[#07110d] text-white">
 
                     <tr>
+                        <th class="px-6 py-4 text-left uppercase text-xs">Imagen</th>
                         <th class="px-6 py-4 text-left uppercase text-xs">Nombre</th>
                         <th class="px-6 py-4 text-left uppercase text-xs">Deporte</th>
                         <th class="px-6 py-4 text-left uppercase text-xs">Precio</th>
@@ -315,6 +357,18 @@ new #[Layout('layouts.admin')] class extends Component {
                     @forelse ($courts as $court)
                         <tr class="hover:bg-lime-50 transition">
 
+                            <td class="px-6 py-4">
+
+                                @if ($court->image)
+                                    <img src="{{ asset('storage/' . $court->image) }}"
+                                        class="h-16 w-24 object-cover rounded-xl">
+                                @else
+                                    <span class="text-gray-400 text-sm">
+                                        Sin imagen
+                                    </span>
+                                @endif
+
+                            </td>
 
                             <td class="px-6 py-4 font-bold">
                                 {{ $court->name }}
@@ -380,7 +434,7 @@ new #[Layout('layouts.admin')] class extends Component {
 
                         <tr>
 
-                            <td colspan="6" class="px-6 py-8 text-center text-gray-500">
+                            <td colspan="7" class="px-6 py-8 text-center text-gray-500">
 
                                 No hay canchas registradas.
 
