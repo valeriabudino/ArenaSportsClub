@@ -35,10 +35,6 @@ Route::view('/torneos', 'pages.tournaments')->name('tournaments.index');
 Route::view('/nosotros', 'pages.about')->name('about');
 Route::view('/contacto', 'pages.contact')->name('contact');
 
-Route::view('dashboard', 'dashboard')
-    ->middleware(['auth'])
-    ->name('dashboard');
-
 Route::view('profile', 'profile')
     ->middleware(['auth'])
     ->name('profile');
