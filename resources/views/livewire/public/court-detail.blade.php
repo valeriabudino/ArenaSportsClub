@@ -298,7 +298,7 @@ new class extends Component {
 
                     <button wire:click="reserve({{ $selectedTurn->id }})"
                         class="bg-lime-400 text-black px-6 py-3 rounded-xl font-black hover:bg-lime-300 transition">
-                        Pagar con Mercado Pago
+                        Pagar
                     </button>
                 </div>
             </div>
