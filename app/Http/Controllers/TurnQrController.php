@@ -29,12 +29,26 @@ class TurnQrController extends Controller
     {
         abort_if($turn->status !== 'booked' || ! $turn->qr_code, 404);
 
-        $png = (new ChillerlanQrCode(new QROptions([
+        return response($this->generatePng($turn->qr_code))
+            ->header('Content-Type', 'image/png');
+    }
+
+    public function download(Turn $turn)
+    {
+        abort_if($turn->user_id !== auth()->id(), 403);
+        abort_if($turn->status !== 'booked' || ! $turn->qr_code, 404);
+
+        return response($this->generatePng($turn->qr_code))
+            ->header('Content-Type', 'image/png')
+            ->header('Content-Disposition', "attachment; filename=\"qr-turno-{$turn->id}.png\"");
+    }
+
+    private function generatePng(string $qrCode): string
+    {
+        return (new ChillerlanQrCode(new QROptions([
             'outputInterface' => QRGdImagePNG::class,
             'outputBase64' => false,
             'scale' => 10,
-        ])))->render($turn->qr_code);
-
-        return response($png)->header('Content-Type', 'image/png');
+        ])))->render($qrCode);
     }
 }

@@ -17,6 +17,10 @@ Route::get('/mis-reservas/{turn}/qr', [TurnQrController::class, 'show'])
     ->middleware(['auth'])
     ->name('reservations.qr');
 
+Route::get('/mis-reservas/{turn}/qr/descargar', [TurnQrController::class, 'download'])
+    ->middleware(['auth'])
+    ->name('reservations.qr.download');
+
 // Sin sesion, protegida por firma temporal (usada como mediaUrl en recordatorios de WhatsApp).
 Route::get('/mis-reservas/{turn}/qr-firmado', [TurnQrController::class, 'showSigned'])
     ->middleware(['signed'])
