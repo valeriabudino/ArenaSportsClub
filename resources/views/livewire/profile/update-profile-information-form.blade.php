@@ -10,6 +10,7 @@ new class extends Component
 {
     public string $name = '';
     public string $email = '';
+    public string $phone = '';
 
     /**
      * Mount the component.
@@ -18,6 +19,7 @@ new class extends Component
     {
         $this->name = Auth::user()->name;
         $this->email = Auth::user()->email;
+        $this->phone = Auth::user()->phone ?? '';
     }
 
     /**
@@ -30,6 +32,7 @@ new class extends Component
         $validated = $this->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', Rule::unique(User::class)->ignore($user->id)],
+            'phone' => ['nullable', 'string', 'max:20'],
         ]);
 
         $user->fill($validated);
@@ -125,6 +128,25 @@ new class extends Component
                     @endif
                 </div>
             @endif
+        </div>
+
+        <div>
+            <label class="font-bold text-sm text-gray-700">WhatsApp</label>
+
+            <input
+                wire:model="phone"
+                id="phone"
+                name="phone"
+                type="tel"
+                autocomplete="tel"
+                class="mt-2 w-full rounded-xl border-gray-300 focus:border-lime-400 focus:ring-lime-400"
+            >
+
+            <p class="mt-2 text-sm text-gray-500">
+                Lo usamos para avisarte por WhatsApp cuando confirmamos tu reserva y para recordarte el turno.
+            </p>
+
+            <x-input-error class="mt-2" :messages="$errors->get('phone')" />
         </div>
 
         <div class="flex items-center gap-4">
