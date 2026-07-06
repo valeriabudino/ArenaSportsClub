@@ -161,7 +161,7 @@ new class extends Component {
                             @if ($r->status === 'booked' && $r->qr_code)
                                 @php
                                     $qrStart = \Carbon\Carbon::parse("{$r->date} {$r->start_time}")->subMinutes(15);
-                                    $qrEnd = \Carbon\Carbon::parse("{$r->date} {$r->end_time}")->subMinutes(15);
+                                    $qrEnd = \Carbon\Carbon::parse("{$r->date} {$r->end_time}");
                                     $qrState = now()->lessThan($qrStart)
                                         ? 'no_habilitado'
                                         : (now()->greaterThan($qrEnd) ? 'expirado' : 'activo');

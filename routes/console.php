@@ -9,3 +9,4 @@ Artisan::command('inspire', function () {
 })->purpose('Display an inspiring quote');
 
 Schedule::command('turnos:recordatorio')->hourly();
+Schedule::command('accesos:sincronizar')->hourly();

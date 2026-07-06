@@ -1,0 +1,172 @@
+{
+	"info": {
+		"name": "Arena Sport Club - Validacion de QR (control de accesos)",
+		"description": "Coleccion para probar POST /api/reservations/validate, el endpoint que consume el sistema de control de accesos del otro grupo. Las variables qr_code_* apuntan a turnos de prueba que se regeneran localmente (ver README en el mismo directorio) y se van a quedar obsoletas si se borran esos turnos de la base de datos.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"variable": [
+		{ "key": "base_url", "value": "http://127.0.0.1:8000" },
+		{ "key": "qr_code_aprobado", "value": "9c4130fb-7b76-4546-bb1f-b96b41687377" },
+		{ "key": "qr_code_impago", "value": "124a4579-d7f1-4548-bef4-5bf03ec9a377" },
+		{ "key": "qr_code_vencido", "value": "d2ffa4fd-eaf6-4884-9071-c64f0861afda" }
+	],
+	"item": [
+		{
+			"name": "1. Aprobado - reserva pagada dentro de horario",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"pm.test('Status 200', () => pm.response.to.have.status(200));",
+							"pm.test('valido es true', () => pm.expect(pm.response.json().valido).to.eql(true));",
+							"pm.test('mensaje de bienvenida', () => pm.expect(pm.response.json().mensaje).to.eql('Reserva confirmada. Bienvenido.'));"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{ "key": "Content-Type", "value": "application/json" },
+					{ "key": "Accept", "value": "application/json" }
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"qr_code\": \"{{qr_code_aprobado}}\",\n    \"terminal_id\": \"PUERTA_PRINCIPAL\"\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/api/reservations/validate",
+					"host": [ "{{base_url}}" ],
+					"path": [ "api", "reservations", "validate" ]
+				}
+			}
+		},
+		{
+			"name": "2. Reescaneo - mismo QR aprobado de nuevo (no se invalida)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"pm.test('Status 200', () => pm.response.to.have.status(200));",
+							"pm.test('sigue valido en el segundo escaneo', () => pm.expect(pm.response.json().valido).to.eql(true));"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{ "key": "Content-Type", "value": "application/json" },
+					{ "key": "Accept", "value": "application/json" }
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"qr_code\": \"{{qr_code_aprobado}}\",\n    \"terminal_id\": \"PUERTA_TRASERA\"\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/api/reservations/validate",
+					"host": [ "{{base_url}}" ],
+					"path": [ "api", "reservations", "validate" ]
+				}
+			}
+		},
+		{
+			"name": "3. Rechazado - reserva impaga (pending_payment)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"pm.test('Status 200', () => pm.response.to.have.status(200));",
+							"pm.test('valido es false', () => pm.expect(pm.response.json().valido).to.eql(false));",
+							"pm.test('mensaje de rechazo', () => pm.expect(pm.response.json().mensaje).to.eql('Reserva impaga o fuera de horario permitido.'));"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{ "key": "Content-Type", "value": "application/json" },
+					{ "key": "Accept", "value": "application/json" }
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"qr_code\": \"{{qr_code_impago}}\",\n    \"terminal_id\": \"PUERTA_PRINCIPAL\"\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/api/reservations/validate",
+					"host": [ "{{base_url}}" ],
+					"path": [ "api", "reservations", "validate" ]
+				}
+			}
+		},
+		{
+			"name": "4. Rechazado - fuera de horario (turno ya finalizado)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"pm.test('Status 200', () => pm.response.to.have.status(200));",
+							"pm.test('valido es false', () => pm.expect(pm.response.json().valido).to.eql(false));"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{ "key": "Content-Type", "value": "application/json" },
+					{ "key": "Accept", "value": "application/json" }
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"qr_code\": \"{{qr_code_vencido}}\",\n    \"terminal_id\": \"PUERTA_PRINCIPAL\"\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/api/reservations/validate",
+					"host": [ "{{base_url}}" ],
+					"path": [ "api", "reservations", "validate" ]
+				}
+			}
+		},
+		{
+			"name": "5. Rechazado - QR inexistente",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"pm.test('Status 200', () => pm.response.to.have.status(200));",
+							"pm.test('valido es false', () => pm.expect(pm.response.json().valido).to.eql(false));"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{ "key": "Content-Type", "value": "application/json" },
+					{ "key": "Accept", "value": "application/json" }
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"qr_code\": \"no-existe-este-codigo\",\n    \"terminal_id\": \"PUERTA_PRINCIPAL\"\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/api/reservations/validate",
+					"host": [ "{{base_url}}" ],
+					"path": [ "api", "reservations", "validate" ]
+				}
+			}
+		}
+	]
+}

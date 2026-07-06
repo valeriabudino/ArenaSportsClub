@@ -48,6 +48,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
     Volt::route('club', 'admin.club.index')->name('admin.club');
     Volt::route('turns', 'admin.turns.index')->name('admin.turns.index');
     Volt::route('refunds', 'admin.refunds.index')->name('admin.refunds');
+    Volt::route('accesos', 'admin.access-logs.index')->name('admin.access-logs.index');
 });
 
 require __DIR__ . '/auth.php';

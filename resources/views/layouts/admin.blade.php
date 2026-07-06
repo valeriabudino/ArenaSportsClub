@@ -85,6 +85,15 @@
 
 
 
+                <a href="{{ route('admin.access-logs.index') }}"
+                    class="block px-4 py-3 rounded-xl hover:bg-lime-400 hover:text-black font-bold transition">
+
+                    Accesos
+
+                </a>
+
+
+
                 <a href="{{ route('admin.club') }}"
                     class="block px-4 py-3 rounded-xl hover:bg-lime-400 hover:text-black font-bold transition">
 

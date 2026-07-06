@@ -11,36 +11,38 @@ class ReservationValidationController extends Controller
 {
     public function validate(Request $request)
     {
-        $qrCode = $request->query('qr_code');
+        $qrCode = $request->input('qr_code');
 
         $turn = $qrCode
-            ? Turn::with('court')->where('qr_code', $qrCode)->where('status', 'booked')->first()
+            ? Turn::with('user')->where('qr_code', $qrCode)->where('status', 'booked')->first()
             : null;
 
         if (! $turn) {
-            return response()->json([
-                'valido' => false,
-                'mensaje' => 'Error: Reserva no encontrada o fuera de horario',
-            ], 404);
+            return $this->rejected();
         }
 
         $start = Carbon::parse("{$turn->date} {$turn->start_time}");
         $end = Carbon::parse("{$turn->date} {$turn->end_time}");
         $enabledFrom = $start->copy()->subMinutes(15);
-        $enabledUntil = $end->copy()->subMinutes(15);
 
         $now = Carbon::now();
 
-        if ($now->lessThan($enabledFrom) || $now->greaterThan($enabledUntil)) {
-            return response()->json([
-                'valido' => false,
-                'mensaje' => 'Error: Reserva no encontrada o fuera de horario',
-            ], 404);
+        if ($now->lessThan($enabledFrom) || $now->greaterThan($end)) {
+            return $this->rejected();
         }
 
         return response()->json([
             'valido' => true,
-            'mensaje' => "Reserva confirmada: {$turn->court->name} - {$start->format('H:i')}hs",
+            'mensaje' => 'Reserva confirmada. Bienvenido.',
+            'cliente' => $turn->user->name,
+        ]);
+    }
+
+    private function rejected()
+    {
+        return response()->json([
+            'valido' => false,
+            'mensaje' => 'Reserva impaga o fuera de horario permitido.',
         ]);
     }
 }
