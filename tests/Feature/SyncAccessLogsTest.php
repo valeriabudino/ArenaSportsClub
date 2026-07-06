@@ -12,6 +12,16 @@ class SyncAccessLogsTest extends TestCase
 {
     use RefreshDatabase;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        config([
+            'services.canchas.daily_logs_url' => 'https://canchas.test/api/canchas/daily-logs',
+            'services.canchas.token' => 'test-token',
+        ]);
+    }
+
     private function fakeReport(): array
     {
         return [
