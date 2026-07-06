@@ -51,4 +51,11 @@ return [
         'whatsapp_from' => env('TWILIO_WHATSAPP_FROM'),
     ],
 
+    'canchas' => [
+        // API del otro grupo (control de accesos fisico) que expone el reporte
+        // diario de escaneos. La URL cambia cada vez que reinician su tunel.
+        'daily_logs_url' => env('CANCHAS_API_URL'),
+        'token' => env('CANCHAS_API_TOKEN'),
+    ],
+
 ];
