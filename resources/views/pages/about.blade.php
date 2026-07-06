@@ -23,8 +23,9 @@
             <div class="grid md:grid-cols-3 gap-8">
                 {{-- Card 1 --}}
                 <article class="bg-white text-[#07110d] rounded-3xl p-8 shadow-2xl hover:-translate-y-2 transition">
-                    <div class="h-28 w-28 rounded-full bg-gray-200 mx-auto mb-6 overflow-hidden">
-                        {{-- <img src="{{ asset('images/team/matias.jpg') }}" class="h-full w-full object-cover"> --}}
+                    <div class="h-28 w-28 rounded-full mx-auto mb-6 overflow-hidden">
+                        <img src="{{ asset('images/team/nadia.png') }}" alt="Medina Nadia"
+                            class="h-full w-full object-cover">
                     </div>
 
                     <h2 class="text-2xl font-black text-center">
@@ -32,18 +33,18 @@
                     </h2>
 
                     <p class="text-lime-600 font-black text-center mt-1">
-                        Administración / Presentación
+                        Backend / Gestion de datos
                     </p>
 
                     <p class="text-gray-600 text-center mt-4">
-                        Colaboración en la organización del proyecto, documentación,
-                        presentación y pruebas de funcionamiento del sistema.
+                        Encargada del desarrollo de funcionalidades internas, gestión de datos y validación de procesos para
+                        el correcto funcionamiento del sistema.
                     </p>
 
                     <div class="flex flex-wrap justify-center gap-2 mt-5">
-                        <span class="bg-lime-100 text-lime-700 px-3 py-1 rounded-full text-sm font-bold">Testing</span>
-                        <span class="bg-lime-100 text-lime-700 px-3 py-1 rounded-full text-sm font-bold">Docs</span>
-                        <span class="bg-lime-100 text-lime-700 px-3 py-1 rounded-full text-sm font-bold">Expo</span>
+                        <span class="bg-lime-100 text-lime-700 px-3 py-1 rounded-full text-sm font-bold">Laravel</span>
+                        <span class="bg-lime-100 text-lime-700 px-3 py-1 rounded-full text-sm font-bold">SQLite</span>
+                        <span class="bg-lime-100 text-lime-700 px-3 py-1 rounded-full text-sm font-bold">PHP</span>
                     </div>
 
                     <div class="flex justify-center gap-3 mt-6">
@@ -61,7 +62,10 @@
 
                 {{-- Card 2 --}}
                 <article class="bg-white text-[#07110d] rounded-3xl p-8 shadow-2xl hover:-translate-y-2 transition">
-                    <div class="h-28 w-28 rounded-full bg-gray-200 mx-auto mb-6"></div>
+                    <div class="h-28 w-28 rounded-full mx-auto mb-6 overflow-hidden">
+                        <img src="{{ asset('images/team/valeria.png') }}" alt="Budiño Valeria"
+                            class="h-full w-full object-cover">
+                    </div>
 
                     <h2 class="text-2xl font-black text-center">
                         Budiño Valeria
@@ -88,8 +92,8 @@
                             GitHub
                         </a>
 
-                        <a href="https://www.linkedin.com/in/valeria-budino-fernandez/" target="_blank" rel="noopener noreferrer"
-                            class="font-black text-sm hover:text-lime-600">
+                        <a href="https://www.linkedin.com/in/valeria-budino-fernandez/" target="_blank"
+                            rel="noopener noreferrer" class="font-black text-sm hover:text-lime-600">
                             LinkedIn
                         </a>
                     </div>
@@ -97,7 +101,10 @@
 
                 {{-- Card 3 --}}
                 <article class="bg-white text-[#07110d] rounded-3xl p-8 shadow-2xl hover:-translate-y-2 transition">
-                    <div class="h-28 w-28 rounded-full bg-gray-200 mx-auto mb-6"></div>
+                    <div class="h-28 w-28 rounded-full mx-auto mb-6 overflow-hidden">
+                        <img src="{{ asset('images/team/matias.png') }}" alt="Matías Nuñez"
+                            class="h-full w-full object-cover">
+                    </div>
 
                     <h2 class="text-2xl font-black text-center">
                         Nuñez Matias
@@ -124,8 +131,8 @@
                             GitHub
                         </a>
 
-                        <a href="https://www.linkedin.com/in/matias-nu%C3%B1ez-63694a24b/" target="_blank" rel="noopener noreferrer"
-                            class="font-black text-sm hover:text-lime-600">
+                        <a href="https://www.linkedin.com/in/matias-nu%C3%B1ez-63694a24b/" target="_blank"
+                            rel="noopener noreferrer" class="font-black text-sm hover:text-lime-600">
                             LinkedIn
                         </a>
                     </div>
