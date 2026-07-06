@@ -4,8 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Payment;
 use Illuminate\Http\Request;
-use MercadoPago\Payment as MpPayment;
-use MercadoPago\SDK;
+use MercadoPago\Client\Payment\PaymentClient;
+use MercadoPago\MercadoPagoConfig;
 
 class MercadoPagoController extends Controller
 {
@@ -18,8 +18,15 @@ class MercadoPagoController extends Controller
             return response()->json(['ignored' => true]);
         }
 
-        SDK::setAccessToken(config('services.mercadopago.access_token'));
-        $mpPayment = MpPayment::find_by_id($paymentId);
+        MercadoPagoConfig::setAccessToken(config('services.mercadopago.access_token'));
+
+        try {
+            $mpPayment = (new PaymentClient())->get((int) $paymentId);
+        } catch (\Throwable $e) {
+            report($e);
+
+            return response()->json(['error' => 'payment not found'], 404);
+        }
 
         if (! $mpPayment || ! $mpPayment->external_reference) {
             return response()->json(['error' => 'payment not found'], 404);
