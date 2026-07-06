@@ -151,7 +151,7 @@ new class extends Component {
                         </div>
                     </div>
 
-                    <div class="md:text-right">
+                    <div class="flex flex-col items-center md:items-end gap-4">
                         @if ($r->status === 'booked' || $r->status === 'pending_payment')
                             <span class="inline-block px-4 py-2 rounded-full font-black text-sm
                                 {{ $r->status === 'booked' ? 'bg-blue-100 text-blue-700' : 'bg-yellow-100 text-yellow-700' }}">
@@ -172,26 +172,31 @@ new class extends Component {
                                     ];
                                 @endphp
 
-                                <div class="mt-4 flex flex-col items-center md:items-end">
+                                <div class="flex flex-col items-center gap-1">
                                     <img src="{{ route('reservations.qr', $r) }}" alt="Código QR de acceso"
                                         class="w-32 h-32 {{ $qrState === 'activo' ? '' : 'opacity-40 grayscale' }}">
 
-                                    <p class="text-xs text-gray-400 mt-1">
+                                    <p class="text-xs text-gray-400">
                                         {{ $qrStateLabels[$qrState] }}
                                     </p>
+
+                                    <a href="{{ route('reservations.qr.download', $r) }}"
+                                        class="text-xs font-bold text-lime-600 hover:text-lime-700 underline">
+                                        Descargar QR
+                                    </a>
                                 </div>
                             @endif
 
                             @if ($r->status === 'pending_payment')
                                 <button wire:click="pay({{ $r->id }})"
-                                        class="mt-4 block w-full md:w-auto bg-lime-400 text-black px-6 py-3 rounded-xl font-black hover:bg-lime-300 transition">
+                                        class="w-full md:w-auto bg-lime-400 text-black px-6 py-3 rounded-xl font-black hover:bg-lime-300 transition">
                                     Pagar
                                 </button>
                             @endif
 
                             <button wire:click="cancel({{ $r->id }})"
                                     wire:confirm="¿Cancelar esta reserva? Si faltan menos de 24hs para el turno no corresponde reembolso."
-                                    class="mt-4 block w-full md:w-auto bg-red-500 text-white px-6 py-3 rounded-xl font-black hover:bg-red-600 transition">
+                                    class="w-full md:w-auto bg-red-500 text-white px-6 py-3 rounded-xl font-black hover:bg-red-600 transition">
                                 Cancelar
                             </button>
                         @else
