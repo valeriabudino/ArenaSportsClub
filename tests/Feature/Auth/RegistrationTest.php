@@ -24,6 +24,7 @@ class RegistrationTest extends TestCase
         $component = Volt::test('pages.auth.register')
             ->set('name', 'Test User')
             ->set('email', 'test@example.com')
+            ->set('phone', '5493718681502')
             ->set('password', 'password')
             ->set('password_confirmation', 'password');
 
@@ -32,5 +33,20 @@ class RegistrationTest extends TestCase
         $component->assertRedirect(route('home', absolute: false));
 
         $this->assertAuthenticated();
+    }
+
+    public function test_phone_is_required_to_register(): void
+    {
+        $component = Volt::test('pages.auth.register')
+            ->set('name', 'Test User')
+            ->set('email', 'test@example.com')
+            ->set('password', 'password')
+            ->set('password_confirmation', 'password');
+
+        $component->call('register');
+
+        $component->assertHasErrors(['phone' => 'required']);
+
+        $this->assertGuest();
     }
 }
