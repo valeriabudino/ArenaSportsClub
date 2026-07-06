@@ -8,6 +8,7 @@ use App\Models\Turn;
 use App\Models\User;
 use App\Services\WhatsApp\WhatsAppSenderInterface;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\Support\FakeWhatsAppSender;
 use Tests\TestCase;
 
 class SendTurnRemindersTest extends TestCase
@@ -114,19 +115,5 @@ class SendTurnRemindersTest extends TestCase
 
         $this->assertCount(1, $fake->sent);
         $this->assertNull($turn->fresh()->reminder_sent_at);
-    }
-}
-
-class FakeWhatsAppSender implements WhatsAppSenderInterface
-{
-    public array $sent = [];
-
-    public function __construct(private readonly bool $succeeds = true) {}
-
-    public function sendMessage(string $phoneNumber, string $message, ?string $mediaUrl = null): bool
-    {
-        $this->sent[] = ['phone' => $phoneNumber, 'message' => $message, 'mediaUrl' => $mediaUrl];
-
-        return $this->succeeds;
     }
 }

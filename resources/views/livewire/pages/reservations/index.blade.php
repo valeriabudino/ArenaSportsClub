@@ -1,9 +1,31 @@
 <?php
 
 use App\Models\Turn;
+use App\Services\MercadoPagoService;
 use Livewire\Volt\Component;
 
 new class extends Component {
+    public function pay($turnId)
+    {
+        $turn = Turn::where('id', $turnId)
+            ->where('user_id', auth()->id())
+            ->where('status', 'pending_payment')
+            ->first();
+
+        if (!$turn) {
+            return;
+        }
+
+        try {
+            $result = app(MercadoPagoService::class)->createPreference($turn);
+
+            return redirect()->away($result['checkout_url']);
+        } catch (\Throwable $e) {
+            session()->flash('error', 'No se pudo iniciar el pago con Mercado Pago. Intentá nuevamente.');
+            report($e);
+        }
+    }
+
     public function cancel($turnId)
     {
         $turn = Turn::where('id', $turnId)
@@ -73,6 +95,12 @@ new class extends Component {
     @if (session('success'))
         <div class="mb-6 bg-lime-400 text-black px-5 py-4 rounded-xl font-bold">
             {{ session('success') }}
+        </div>
+    @endif
+
+    @if (session('error'))
+        <div class="mb-6 bg-red-500 text-white px-5 py-4 rounded-xl font-bold">
+            {{ session('error') }}
         </div>
     @endif
 
@@ -152,6 +180,13 @@ new class extends Component {
                                         {{ $qrStateLabels[$qrState] }}
                                     </p>
                                 </div>
+                            @endif
+
+                            @if ($r->status === 'pending_payment')
+                                <button wire:click="pay({{ $r->id }})"
+                                        class="mt-4 block w-full md:w-auto bg-lime-400 text-black px-6 py-3 rounded-xl font-black hover:bg-lime-300 transition">
+                                    Pagar
+                                </button>
                             @endif
 
                             <button wire:click="cancel({{ $r->id }})"
