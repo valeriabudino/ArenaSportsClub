@@ -71,22 +71,61 @@ new class extends Component {
             return;
         }
 
+        if (!$this->userHasCompletedTurn()) {
+            session()->flash('error', 'Solo podés valorar canchas donde ya jugaste un turno confirmado.');
+            return;
+        }
+
+        if ($this->userAlreadyReviewed()) {
+            session()->flash('error', 'Ya dejaste una valoración para esta cancha.');
+            return;
+        }
+
         $this->validate([
             'rating' => 'required|integer|min:1|max:5',
             'comment' => 'nullable|string|max:500',
         ]);
 
-        CourtReview::create([
-            'court_id' => $this->court->id,
-            'user_id' => auth()->id(),
-            'rating' => $this->rating,
-            'comment' => $this->comment,
-        ]);
+        try {
+            CourtReview::create([
+                'court_id' => $this->court->id,
+                'user_id' => auth()->id(),
+                'rating' => $this->rating,
+                'comment' => $this->comment,
+            ]);
+        } catch (\Illuminate\Database\QueryException $e) {
+            session()->flash('error', 'Ya dejaste una valoración para esta cancha.');
+            return;
+        }
 
         $this->rating = 5;
         $this->comment = '';
 
         session()->flash('success', 'Comentario publicado correctamente.');
+    }
+
+    private function userHasCompletedTurn(): bool
+    {
+        $today = now()->toDateString();
+        $nowTime = now()->format('H:i:s');
+
+        return $this->court->turns()
+            ->where('user_id', auth()->id())
+            ->where('status', 'booked')
+            ->where(function ($query) use ($today, $nowTime) {
+                $query->where('date', '<', $today)
+                    ->orWhere(function ($query) use ($today, $nowTime) {
+                        $query->where('date', $today)->where('end_time', '<', $nowTime);
+                    });
+            })
+            ->exists();
+    }
+
+    private function userAlreadyReviewed(): bool
+    {
+        return CourtReview::where('court_id', $this->court->id)
+            ->where('user_id', auth()->id())
+            ->exists();
     }
 
     public function with(): array
@@ -97,6 +136,8 @@ new class extends Component {
 
             'reviews' => $this->court->reviews()->with('user')->latest()->get(),
             'averageRating' => round($this->court->reviews()->avg('rating'), 1),
+            'canReview' => auth()->check() && $this->userHasCompletedTurn(),
+            'alreadyReviewed' => auth()->check() && $this->userAlreadyReviewed(),
         ];
     }
 };
@@ -337,36 +378,50 @@ new class extends Component {
         </div>
 
         @auth
-            <form wire:submit="saveReview" class="bg-gray-100 rounded-2xl p-6 mb-8">
-                <div class="grid md:grid-cols-[180px_1fr] gap-5">
-                    <div>
-                        <label class="font-bold text-sm">Puntuación</label>
+            @if ($alreadyReviewed)
+                <div class="bg-gray-100 rounded-2xl p-6 mb-8 text-center">
+                    <p class="font-bold text-gray-600">
+                        Ya dejaste tu valoración para esta cancha. ¡Gracias por tu opinión!
+                    </p>
+                </div>
+            @elseif ($canReview)
+                <form wire:submit="saveReview" class="bg-gray-100 rounded-2xl p-6 mb-8">
+                    <div class="grid md:grid-cols-[180px_1fr] gap-5">
+                        <div>
+                            <label class="font-bold text-sm">Puntuación</label>
 
-                        <select wire:model="rating"
-                            class="mt-2 w-full rounded-xl border-gray-300 focus:border-lime-400 focus:ring-lime-400">
-                            <option value="5">5 estrellas</option>
-                            <option value="4">4 estrellas</option>
-                            <option value="3">3 estrellas</option>
-                            <option value="2">2 estrellas</option>
-                            <option value="1">1 estrella</option>
-                        </select>
+                            <select wire:model="rating"
+                                class="mt-2 w-full rounded-xl border-gray-300 focus:border-lime-400 focus:ring-lime-400">
+                                <option value="5">5 estrellas</option>
+                                <option value="4">4 estrellas</option>
+                                <option value="3">3 estrellas</option>
+                                <option value="2">2 estrellas</option>
+                                <option value="1">1 estrella</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="font-bold text-sm">Comentario</label>
+
+                            <textarea wire:model="comment" rows="3" placeholder="Contá tu experiencia..."
+                                class="mt-2 w-full rounded-xl border-gray-300 focus:border-lime-400 focus:ring-lime-400"></textarea>
+                        </div>
                     </div>
 
-                    <div>
-                        <label class="font-bold text-sm">Comentario</label>
-
-                        <textarea wire:model="comment" rows="3" placeholder="Contá tu experiencia..."
-                            class="mt-2 w-full rounded-xl border-gray-300 focus:border-lime-400 focus:ring-lime-400"></textarea>
+                    <div class="flex justify-end mt-5">
+                        <button type="submit"
+                            class="bg-lime-400 text-black px-6 py-3 rounded-xl font-black hover:bg-lime-300 transition">
+                            Publicar comentario
+                        </button>
                     </div>
+                </form>
+            @else
+                <div class="bg-gray-100 rounded-2xl p-6 mb-8 text-center">
+                    <p class="font-bold text-gray-600">
+                        Solo podés valorar canchas donde ya jugaste un turno confirmado.
+                    </p>
                 </div>
-
-                <div class="flex justify-end mt-5">
-                    <button type="submit"
-                        class="bg-lime-400 text-black px-6 py-3 rounded-xl font-black hover:bg-lime-300 transition">
-                        Publicar comentario
-                    </button>
-                </div>
-            </form>
+            @endif
         @else
             <div class="bg-gray-100 rounded-2xl p-6 mb-8 text-center">
                 <p class="font-bold text-gray-600">
