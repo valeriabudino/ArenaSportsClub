@@ -4,6 +4,7 @@ use App\Models\Court;
 use App\Models\CourtReview;
 use App\Models\Turn;
 use App\Services\MercadoPagoService;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Livewire\Volt\Component;
 
@@ -22,6 +23,15 @@ new class extends Component {
 
     public function selectTurn($turnId)
     {
+        $turn = Turn::where('id', $turnId)
+            ->where('court_id', $this->court->id)
+            ->first();
+
+        if (!$turn || $this->turnIsPast($turn)) {
+            session()->flash('error', 'Este turno ya pasó y no se puede reservar.');
+            return;
+        }
+
         $this->selectedTurnId = $turnId;
     }
 
@@ -32,9 +42,13 @@ new class extends Component {
         }
 
         $turn = DB::transaction(function () use ($turnId) {
-            $turn = Turn::where('id', $turnId)->where('status', 'available')->lockForUpdate()->first();
+            $turn = Turn::where('id', $turnId)
+                ->where('court_id', $this->court->id)
+                ->where('status', 'available')
+                ->lockForUpdate()
+                ->first();
 
-            if (!$turn) {
+            if (!$turn || $this->turnIsPast($turn)) {
                 return null;
             }
 
@@ -48,7 +62,7 @@ new class extends Component {
 
         if (!$turn) {
             $this->dispatch('close-modal', 'confirmar-reserva');
-            session()->flash('error', 'El turno ya no está disponible');
+            session()->flash('error', 'El turno ya no está disponible o ya pasó.');
             return;
         }
 
@@ -104,18 +118,25 @@ new class extends Component {
         session()->flash('success', 'Comentario publicado correctamente.');
     }
 
+    private function turnIsPast(Turn $turn): bool
+    {
+        return Carbon::parse($turn->date . ' ' . $turn->start_time)->isPast();
+    }
+
     private function userHasCompletedTurn(): bool
     {
         $today = now()->toDateString();
         $nowTime = now()->format('H:i:s');
 
-        return $this->court->turns()
+        return $this->court
+            ->turns()
             ->where('user_id', auth()->id())
             ->where('status', 'booked')
             ->where(function ($query) use ($today, $nowTime) {
                 $query->where('date', '<', $today)
                     ->orWhere(function ($query) use ($today, $nowTime) {
-                        $query->where('date', $today)->where('end_time', '<', $nowTime);
+                        $query->where('date', $today)
+                            ->where('end_time', '<', $nowTime);
                     });
             })
             ->exists();
@@ -131,7 +152,14 @@ new class extends Component {
     public function with(): array
     {
         return [
-            'turns' => Turn::where('court_id', $this->court->id)->where('date', $this->selectedDate)->orderBy('start_time')->get(),
+            'turns' => Turn::where('court_id', $this->court->id)
+                ->where('date', $this->selectedDate)
+                ->when($this->selectedDate === now()->toDateString(), function ($query) {
+                    $query->where('start_time', '>', now()->format('H:i:s'));
+                })
+                ->orderBy('start_time')
+                ->get(),
+
             'selectedTurn' => $this->selectedTurnId ? Turn::with('court')->find($this->selectedTurnId) : null,
 
             'reviews' => $this->court->reviews()->with('user')->latest()->get(),
@@ -260,8 +288,7 @@ new class extends Component {
                             </span>
 
                             @auth
-                                <button type="button"
-                                    x-data=""
+                                <button type="button" x-data=""
                                     x-on:click="$dispatch('open-modal', 'confirmar-reserva')"
                                     wire:click="selectTurn({{ $turn->id }})"
                                     class="mt-4 w-full bg-lime-400 text-black rounded-xl py-3 font-black hover:bg-lime-300 transition">
@@ -324,19 +351,22 @@ new class extends Component {
 
                     <div class="flex justify-between">
                         <span class="font-bold text-gray-500">Fecha</span>
-                        <span class="font-black">{{ \Carbon\Carbon::parse($selectedTurn->date)->format('d/m/Y') }}</span>
+                        <span
+                            class="font-black">{{ \Carbon\Carbon::parse($selectedTurn->date)->format('d/m/Y') }}</span>
                     </div>
 
                     <div class="flex justify-between">
                         <span class="font-bold text-gray-500">Horario</span>
                         <span class="font-black">
-                            {{ substr($selectedTurn->start_time, 0, 5) }} - {{ substr($selectedTurn->end_time, 0, 5) }}
+                            {{ substr($selectedTurn->start_time, 0, 5) }} -
+                            {{ substr($selectedTurn->end_time, 0, 5) }}
                         </span>
                     </div>
 
                     <div class="flex justify-between text-lg pt-2 border-t border-gray-200">
                         <span class="font-bold text-gray-500">Total a pagar</span>
-                        <span class="font-black text-lime-500">${{ number_format($selectedTurn->price, 0, ',', '.') }}</span>
+                        <span
+                            class="font-black text-lime-500">${{ number_format($selectedTurn->price, 0, ',', '.') }}</span>
                     </div>
                 </div>
 
