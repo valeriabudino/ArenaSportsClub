@@ -15,10 +15,10 @@
         <div>
             <h3 class="font-black uppercase mb-4 text-lime-400">Secciones</h3>
             <ul class="space-y-3 text-white/70">
-                <li><a href="#" class="hover:text-lime-400 transition">Inicio</a></li>
-                <li><a href="#canchas" class="hover:text-lime-400 transition">Canchas</a></li>
-                <li><a href="#nosotros" class="hover:text-lime-400 transition">Nosotros</a></li>
-                <li><a href="#contacto" class="hover:text-lime-400 transition">Contacto</a></li>
+                <li><a href="{{ route('home') }}" class="hover:text-lime-400 transition">Inicio</a></li>
+                <li><a href="{{ route('courts.index') }}" class="hover:text-lime-400 transition">Canchas</a></li>
+                <li><a href="{{ route('about') }}" class="hover:text-lime-400 transition">Nosotros</a></li>
+                <li><a href="{{ route('contact') }}" class="hover:text-lime-400 transition">Contacto</a></li>
             </ul>
         </div>
 
