@@ -2,6 +2,8 @@
 
 use App\Models\Court;
 use App\Models\Sport;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Livewire\Attributes\Layout;
 use Livewire\Volt\Component;
 use Livewire\WithFileUploads;
@@ -34,7 +36,7 @@ new #[Layout('layouts.admin')] class extends Component {
         $imagePath = $this->currentImage;
 
         if ($this->image) {
-            $imagePath = $this->image->store('courts', 'public');
+            $imagePath = $this->optimizeAndStore($this->image);
         }
         if ($this->editingId) {
             Court::findOrFail($this->editingId)->update([
@@ -59,6 +61,41 @@ new #[Layout('layouts.admin')] class extends Component {
         }
 
         $this->resetForm();
+    }
+
+    /**
+     * Redimensiona (max 1200px de ancho) y comprime la imagen antes de
+     * guardarla, para no subir fotos de varios MB sin optimizar.
+     */
+    private function optimizeAndStore($uploadedFile): string
+    {
+        $source = @imagecreatefromstring(file_get_contents($uploadedFile->getRealPath()));
+
+        if (! $source) {
+            return $uploadedFile->store('courts', 'public');
+        }
+
+        $width = imagesx($source);
+        $height = imagesy($source);
+        $maxWidth = 1200;
+
+        if ($width > $maxWidth) {
+            $newHeight = (int) round($height * ($maxWidth / $width));
+            $resized = imagecreatetruecolor($maxWidth, $newHeight);
+            imagecopyresampled($resized, $source, 0, 0, 0, 0, $maxWidth, $newHeight, $width, $height);
+            imagedestroy($source);
+            $source = $resized;
+        }
+
+        ob_start();
+        imagejpeg($source, null, 80);
+        $contents = ob_get_clean();
+        imagedestroy($source);
+
+        $filename = 'courts/' . Str::random(40) . '.jpg';
+        Storage::disk('public')->put($filename, $contents);
+
+        return $filename;
     }
 
     public function edit($id)
