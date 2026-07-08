@@ -6,10 +6,13 @@
     <title>ArenaSportsClub</title>
     <link rel="icon" type="image/png" href="{{ asset('favicon.png') }}">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @livewireStyles
 </head>
 <body class="bg-[#f5f5f5] text-[#101814] font-sans antialiased">
     @yield('content')
 
     <x-public.whatsapp-button />
+
+    @livewireScripts
 </body>
 </html>
