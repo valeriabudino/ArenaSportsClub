@@ -6,6 +6,7 @@ use App\Models\Court;
 use App\Models\Sport;
 use App\Models\Turn;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Str;
 use Tests\TestCase;
@@ -13,6 +14,24 @@ use Tests\TestCase;
 class ReservationValidationControllerTest extends TestCase
 {
     use RefreshDatabase;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        // "Ahora" fijo al mediodia, lejos de medianoche: los +/- horas de
+        // estos tests nunca cruzan a otro dia (si no, 'date' y 'start_time'/
+        // 'end_time' quedan desincronizados y el test es flaky segun la hora
+        // real en la que se corra la suite).
+        $this->travelTo(Carbon::parse('2026-06-15 12:00:00'));
+    }
+
+    protected function tearDown(): void
+    {
+        $this->travelBack();
+
+        parent::tearDown();
+    }
 
     private function makeTurn(array $attributes = []): Turn
     {
