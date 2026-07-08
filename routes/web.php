@@ -2,6 +2,9 @@
 
 use App\Http\Controllers\MercadoPagoController;
 use App\Http\Controllers\TurnQrController;
+use App\Models\Court;
+use App\Models\Sport;
+use App\Models\Turn;
 use Illuminate\Support\Facades\Route;
 use Livewire\Volt\Volt;
 
@@ -41,7 +44,12 @@ Route::view('profile', 'profile')
 
 Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
     Route::get('dashboard', function () {
-        return view('pages.admin.dashboard');
+        return view('pages.admin.dashboard', [
+            'courtsCount' => Court::count(),
+            'turnsCount' => Turn::count(),
+            'sportsCount' => Sport::count(),
+            'bookedCount' => Turn::where('status', 'booked')->count(),
+        ]);
     })->name('admin.dashboard');
     Volt::route('sports', 'admin.sports.index')->name('admin.sports');
     Volt::route('courts', 'admin.courts.index')->name('admin.courts');
