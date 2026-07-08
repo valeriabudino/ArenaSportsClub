@@ -26,7 +26,7 @@ class ReservationValidationControllerTest extends TestCase
             'court_id' => $court->id,
             'user_id' => User::factory()->create(['name' => 'Juan Perez'])->id,
             'date' => now()->toDateString(),
-            'start_time' => now()->format('H:i:s'),
+            'start_time' => now()->subMinutes(5)->format('H:i:s'),
             'end_time' => now()->addHour()->format('H:i:s'),
             'price' => 5000,
             'status' => 'booked',
