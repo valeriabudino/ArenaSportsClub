@@ -18,22 +18,22 @@
             <div class="grid md:grid-cols-4 gap-6 mb-10">
                 <div class="bg-white rounded-2xl p-6 shadow">
                     <p class="text-gray-500 text-sm font-bold">Canchas</p>
-                    <h3 class="text-3xl font-black text-lime-500 mt-2">12</h3>
+                    <h3 class="text-3xl font-black text-lime-500 mt-2">{{ $courtsCount }}</h3>
                 </div>
 
                 <div class="bg-white rounded-2xl p-6 shadow">
                     <p class="text-gray-500 text-sm font-bold">Turnos</p>
-                    <h3 class="text-3xl font-black text-lime-500 mt-2">48</h3>
+                    <h3 class="text-3xl font-black text-lime-500 mt-2">{{ $turnsCount }}</h3>
                 </div>
 
                 <div class="bg-white rounded-2xl p-6 shadow">
                     <p class="text-gray-500 text-sm font-bold">Deportes</p>
-                    <h3 class="text-3xl font-black text-lime-500 mt-2">4</h3>
+                    <h3 class="text-3xl font-black text-lime-500 mt-2">{{ $sportsCount }}</h3>
                 </div>
 
                 <div class="bg-white rounded-2xl p-6 shadow">
                     <p class="text-gray-500 text-sm font-bold">Reservas</p>
-                    <h3 class="text-3xl font-black text-lime-500 mt-2">+120</h3>
+                    <h3 class="text-3xl font-black text-lime-500 mt-2">{{ $bookedCount }}</h3>
                 </div>
             </div>
 
