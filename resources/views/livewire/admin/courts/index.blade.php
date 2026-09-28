@@ -198,23 +198,10 @@ new #[Layout('layouts.admin')] class extends Component {
                         </label>
 
 
-                        <select wire:model="sport_id"
-                            class="mt-2 w-full rounded-xl border-gray-300 focus:border-lime-400 focus:ring-lime-400">
-
-
-                            <option value="">
-                                Seleccionar...
-                            </option>
-
-
-                            @foreach ($sports as $sport)
-                                <option value="{{ $sport->id }}">
-                                    {{ $sport->name }}
-                                </option>
-                            @endforeach
-
-
-                        </select>
+                        <x-select wire:model="sport_id"
+                            :options="$sports->pluck('name', 'id')"
+                            placeholder="Seleccionar deporte"
+                            class="mt-2" />
 
 
                         @error('sport_id')

@@ -420,14 +420,13 @@ new class extends Component {
                         <div>
                             <label class="font-bold text-sm">Puntuación</label>
 
-                            <select wire:model="rating"
-                                class="mt-2 w-full rounded-xl border-gray-300 focus:border-lime-400 focus:ring-lime-400">
-                                <option value="5">5 estrellas</option>
-                                <option value="4">4 estrellas</option>
-                                <option value="3">3 estrellas</option>
-                                <option value="2">2 estrellas</option>
-                                <option value="1">1 estrella</option>
-                            </select>
+                            <x-select wire:model="rating" :options="[
+                                5 => '5 estrellas',
+                                4 => '4 estrellas',
+                                3 => '3 estrellas',
+                                2 => '2 estrellas',
+                                1 => '1 estrella',
+                            ]" class="mt-2" />
                         </div>
 
                         <div>

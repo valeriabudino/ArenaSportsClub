@@ -38,14 +38,13 @@ new #[Layout('layouts.admin')] class extends Component {
             <input type="text" wire:model.live="search" placeholder="Buscar por cancha..."
                 class="w-full rounded-xl border-gray-300 focus:border-lime-400 focus:ring-lime-400">
 
-            <select wire:model.live="statusFilter"
-                class="w-full rounded-xl border-gray-300 focus:border-lime-400 focus:ring-lime-400">
-                <option value="">Todos los estados</option>
-                <option value="available">Disponible</option>
-                <option value="pending_payment">Pago pendiente</option>
-                <option value="booked">Reservado</option>
-                <option value="cancelled">Cancelado</option>
-            </select>
+            <x-select wire:model.live="statusFilter" :options="[
+                '' => 'Todos los estados',
+                'available' => 'Disponible',
+                'pending_payment' => 'Pago pendiente',
+                'booked' => 'Reservado',
+                'cancelled' => 'Cancelado',
+            ]" />
 
             <input type="date" wire:model.live="dateFilter"
                 class="w-full rounded-xl border-gray-300 focus:border-lime-400 focus:ring-lime-400">
