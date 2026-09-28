@@ -13,6 +13,8 @@
 
     <x-public.whatsapp-button />
 
+    <x-confirm-dialog />
+
     @livewireScripts
 </body>
 </html>

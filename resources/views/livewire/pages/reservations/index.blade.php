@@ -194,8 +194,14 @@ new class extends Component {
                                 </button>
                             @endif
 
-                            <button wire:click="cancel({{ $r->id }})"
-                                    wire:confirm="¿Cancelar esta reserva? Si faltan menos de 24hs para el turno no corresponde reembolso."
+                            <button type="button"
+                                    x-on:click="$dispatch('confirm-action', {
+                                        title: @js("¿Cancelar tu reserva en {$r->court->name}?"),
+                                        message: @js(\Carbon\Carbon::parse($r->date)->format('d/m/Y') . ' a las ' . substr($r->start_time, 0, 5) . '. Si faltan menos de 24 hs para el turno no corresponde reembolso.'),
+                                        confirmText: 'Cancelar reserva',
+                                        cancelText: 'Volver',
+                                        onConfirm: () => $wire.cancel({{ $r->id }}),
+                                    })"
                                     class="w-full md:w-auto bg-red-500 text-white px-6 py-3 rounded-xl font-black hover:bg-red-600 transition">
                                 Cancelar
                             </button>
