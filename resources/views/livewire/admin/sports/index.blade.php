@@ -62,11 +62,13 @@ new #[Layout('layouts.admin')] class extends Component
         $this->showForm = false;
     }
 
-    public $sports = [];
-
-    public function mount(): void
+    // with() corre en cada render, asi la tabla refleja altas, ediciones y
+    // bajas sin recargar la pagina (antes se cargaba una sola vez en mount).
+    public function with(): array
     {
-        $this->sports = Sport::withCount('courts')->orderBy('name')->get();
+        return [
+            'sports' => Sport::withCount('courts')->orderBy('name')->get(),
+        ];
     }
 }; ?>
 
