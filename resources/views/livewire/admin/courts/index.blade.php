@@ -184,7 +184,15 @@ new #[Layout('layouts.admin')] class extends Component {
         {{-- Formulario --}}
         @if ($showForm)
 
-            <form wire:submit="save" class="mb-8 bg-gray-50 rounded-2xl border border-gray-100 p-6">
+            {{-- Al abrirse (nueva cancha o "Editar") sube hasta el formulario y enfoca
+                 el primer campo. El wire:key hace que al editar otra cancha se vuelva a
+                 crear el form y se repita el scroll. --}}
+            <form wire:submit="save" class="mb-8 scroll-mt-8 bg-gray-50 rounded-2xl border border-gray-100 p-6"
+                wire:key="form-{{ $editingId ?? 'nuevo' }}"
+                x-init="$nextTick(() => {
+                    $el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    $el.querySelector('input[type=text]')?.focus({ preventScroll: true });
+                })">
 
 
                 <div class="grid md:grid-cols-2 gap-5">
