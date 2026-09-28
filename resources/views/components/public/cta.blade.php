@@ -38,10 +38,19 @@
                     </a>
 
 
-                    <a href="#"
-                       class="border border-white/30 text-white px-8 py-4 rounded-xl font-black uppercase hover:border-lime-400 hover:text-lime-400 transition">
-                        Crear cuenta
-                    </a>
+                    @guest
+                        <a href="{{ route('register') }}"
+                           class="border border-white/30 text-white px-8 py-4 rounded-xl font-black uppercase hover:border-lime-400 hover:text-lime-400 transition">
+                            Crear cuenta
+                        </a>
+                    @endguest
+
+                    @auth
+                        <a href="{{ route('reservations.index') }}"
+                           class="border border-white/30 text-white px-8 py-4 rounded-xl font-black uppercase hover:border-lime-400 hover:text-lime-400 transition">
+                            Mis reservas
+                        </a>
+                    @endauth
 
                 </div>
 
