@@ -3,7 +3,7 @@
     <div class="absolute inset-0 bg-black/60"></div>
     <div class="absolute inset-0 bg-gradient-to-r from-black/90 via-black/55 to-black/20"></div>
 
-    <div class="relative z-10 max-w-7xl mx-auto w-full px-6 lg:px-8 pt-24">
+    <div class="relative z-10 max-w-7xl mx-auto w-full px-6 lg:px-8 pt-24 pb-28">
         <div class="max-w-2xl">
             <h2 class="text-white text-5xl md:text-7xl font-black italic leading-tight uppercase">
                 Tu cancha. <br>
