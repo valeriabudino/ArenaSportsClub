@@ -79,8 +79,14 @@ new #[Layout('layouts.admin')] class extends Component {
                             </td>
 
                             <td class="px-6 py-4 text-center">
-                                <button wire:click="markRefunded({{ $payment->id }})"
-                                        wire:confirm="¿Confirmás que ya reembolsaste este pago?"
+                                <button type="button"
+                                        x-on:click="$dispatch('confirm-action', {
+                                            title: '¿Ya reembolsaste este pago?',
+                                            message: @js("{$payment->user->name} · $" . number_format($payment->amount, 0, ',', '.') . ". Marcalo solo si ya devolviste la plata desde Mercado Pago."),
+                                            confirmText: 'Marcar reembolsado',
+                                            variant: 'primary',
+                                            onConfirm: () => $wire.markRefunded({{ $payment->id }}),
+                                        })"
                                         class="bg-lime-400 text-black px-4 py-2 rounded-xl font-black text-sm hover:bg-lime-300 transition">
                                     Marcar reembolsado
                                 </button>

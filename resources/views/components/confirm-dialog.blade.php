@@ -7,6 +7,7 @@
         title: '¿Eliminar cancha?',
         message: 'Esta acción no se puede deshacer.',   // opcional
         confirmText: 'Eliminar',                        // opcional, default "Confirmar"
+        cancelText: 'Volver',                           // opcional, default "Cancelar"
         variant: 'danger',                              // 'danger' (rojo) o 'primary' (lima)
         onConfirm: () => $wire.delete(1),               // lo que se ejecuta al confirmar
     })">
@@ -19,6 +20,7 @@
         title: '',
         message: '',
         confirmText: 'Confirmar',
+        cancelText: 'Cancelar',
         variant: 'danger',
         onConfirm: null,
 
@@ -26,6 +28,7 @@
             this.title = detail.title ?? '¿Estás seguro?';
             this.message = detail.message ?? '';
             this.confirmText = detail.confirmText ?? 'Confirmar';
+            this.cancelText = detail.cancelText ?? 'Cancelar';
             this.variant = detail.variant ?? 'danger';
             this.onConfirm = detail.onConfirm ?? null;
             this.$dispatch('open-modal', 'confirm-action');
@@ -62,9 +65,8 @@
             </div>
 
             <div class="mt-8 flex flex-col-reverse sm:flex-row sm:justify-end gap-3">
-                <button type="button" x-on:click="$dispatch('close')"
+                <button type="button" x-on:click="$dispatch('close')" x-text="cancelText"
                     class="px-6 py-3 rounded-xl font-black border border-gray-300 text-[#07110d] hover:bg-gray-100 transition">
-                    Cancelar
                 </button>
 
                 <button type="button" x-on:click="confirm()" x-text="confirmText"

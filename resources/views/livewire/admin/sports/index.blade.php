@@ -186,9 +186,13 @@ new #[Layout('layouts.admin')] class extends Component
                                     Editar
                                 </button>
 
-                                <button
-                                    wire:click="delete({{ $sport->id }})"
-                                    wire:confirm="¿Eliminar este deporte?"
+                                <button type="button"
+                                    x-on:click="$dispatch('confirm-action', {
+                                        title: @js("¿Eliminar el deporte {$sport->name}?"),
+                                        message: 'Solo se puede eliminar si no tiene canchas asociadas.',
+                                        confirmText: 'Eliminar',
+                                        onConfirm: () => $wire.delete({{ $sport->id }}),
+                                    })"
                                     class="font-bold text-red-600 hover:text-red-700"
                                 >
                                     Eliminar

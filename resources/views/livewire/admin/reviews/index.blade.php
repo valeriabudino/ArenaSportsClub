@@ -82,8 +82,13 @@ new #[Layout('layouts.admin')] class extends Component {
                             </td>
 
                             <td class="px-6 py-4 text-center">
-                                <button wire:click="delete({{ $review->id }})"
-                                        wire:confirm="¿Eliminar este comentario? Esta acción no se puede deshacer."
+                                <button type="button"
+                                        x-on:click="$dispatch('confirm-action', {
+                                            title: '¿Eliminar este comentario?',
+                                            message: @js("Comentario de {$review->user->name} sobre {$review->court->name}. Esta acción no se puede deshacer."),
+                                            confirmText: 'Eliminar',
+                                            onConfirm: () => $wire.delete({{ $review->id }}),
+                                        })"
                                         class="bg-red-500 text-white px-4 py-2 rounded-xl font-black text-sm hover:bg-red-600 transition">
                                     Eliminar
                                 </button>

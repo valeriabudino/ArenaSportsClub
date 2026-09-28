@@ -453,7 +453,13 @@ new #[Layout('layouts.admin')] class extends Component {
 
 
 
-                                <button wire:click="delete({{ $court->id }})" wire:confirm="¿Eliminar esta cancha?"
+                                <button type="button"
+                                    x-on:click="$dispatch('confirm-action', {
+                                        title: @js("¿Eliminar la cancha {$court->name}?"),
+                                        message: 'Va a dejar de aparecer para reservar. Las reservas que ya tiene no se borran.',
+                                        confirmText: 'Eliminar',
+                                        onConfirm: () => $wire.delete({{ $court->id }}),
+                                    })"
                                     class="font-bold text-red-600">
 
                                     Eliminar
