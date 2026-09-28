@@ -1,4 +1,4 @@
-<header class="absolute top-0 left-0 w-full z-20" x-data="{ mobileOpen: false }">
+<header class="absolute top-0 left-0 w-full z-[60]" x-data="{ mobileOpen: false }">
     <nav class="max-w-7xl mx-auto flex items-center justify-between px-6 lg:px-8 py-6">
         <a href="{{ route('home') }}" class="text-2xl font-black text-white tracking-wide">
             Arena<span class="text-lime-400">Sports</span>Club
@@ -77,7 +77,7 @@
 
     {{-- Panel mobile --}}
     <div x-cloak x-show="mobileOpen" x-on:click.outside="mobileOpen = false"
-        class="md:hidden mx-4 mt-2 rounded-2xl bg-[#07110d] border border-white/10 shadow-2xl overflow-hidden">
+        class="md:hidden mx-4 mt-2 rounded-2xl bg-[#07110d] border border-white/10 shadow-2xl max-h-[calc(100dvh-7rem)] overflow-y-auto scrollbar-panel">
         <div class="flex flex-col text-white font-semibold divide-y divide-white/10">
             <a href="{{ route('home') }}" class="px-6 py-4 hover:bg-white/5 hover:text-lime-400 transition">Inicio</a>
             <a href="{{ route('courts.index') }}" class="px-6 py-4 hover:bg-white/5 hover:text-lime-400 transition">Canchas</a>
