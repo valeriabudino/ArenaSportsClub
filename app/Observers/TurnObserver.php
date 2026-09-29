@@ -24,6 +24,7 @@ class TurnObserver
         if ($turn->isDirty('status') && $turn->status === 'available') {
             $turn->qr_code = null;
             $turn->reminder_sent_at = null;
+            $turn->reserved_until = null;
         }
     }
 

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Payment;
+use App\Services\ReservationPaymentHandler;
 use Illuminate\Http\Request;
 use MercadoPago\Client\Payment\PaymentClient;
 use MercadoPago\MercadoPagoConfig;
@@ -38,18 +39,7 @@ class MercadoPagoController extends Controller
             return response()->json(['error' => 'local payment record not found'], 404);
         }
 
-        $payment->update([
-            'mp_payment_id' => $mpPayment->id,
-            'status' => $mpPayment->status,
-        ]);
-
-        $turn = $payment->turn;
-
-        if ($mpPayment->status === 'approved') {
-            $turn->update(['status' => 'booked']);
-        } elseif (in_array($mpPayment->status, ['rejected', 'cancelled'])) {
-            $turn->update(['status' => 'available', 'user_id' => null]);
-        }
+        app(ReservationPaymentHandler::class)->apply($payment, $mpPayment->status, $mpPayment->id);
 
         return response()->json(['ok' => true]);
     }

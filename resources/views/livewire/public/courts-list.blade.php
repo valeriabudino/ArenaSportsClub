@@ -2,6 +2,7 @@
 
 use App\Models\Court;
 use App\Models\Sport;
+use App\Models\Turn;
 use Livewire\Volt\Component;
 
 new class extends Component {
@@ -10,6 +11,8 @@ new class extends Component {
 
     public function with(): array
     {
+        Turn::releaseExpiredReservations();
+
         return [
             'sports' => Sport::orderBy('name')->get(),
             'courts' => Court::with('sport')

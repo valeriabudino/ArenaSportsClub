@@ -7,12 +7,15 @@ use Livewire\Volt\Component;
 new class extends Component {
     public function pay($turnId)
     {
+        Turn::releaseExpiredReservations();
+
         $turn = Turn::where('id', $turnId)
             ->where('user_id', auth()->id())
             ->where('status', 'pending_payment')
             ->first();
 
         if (!$turn) {
+            session()->flash('error', 'Se venció el tiempo para pagar esta reserva y el turno se liberó. Podés volver a reservarlo si sigue disponible.');
             return;
         }
 
@@ -65,6 +68,8 @@ new class extends Component {
 
     public function with(): array
     {
+        Turn::releaseExpiredReservations();
+
         return [
             'reservations' => Turn::with('court.sport')
                 ->where('user_id', auth()->id())
@@ -188,6 +193,12 @@ new class extends Component {
                             @endif
 
                             @if ($r->status === 'pending_payment')
+                                @if ($r->reserved_until)
+                                    <p class="text-xs font-bold text-yellow-600">
+                                        Pagá antes de las {{ $r->reserved_until->format('H:i') }} o el turno se libera
+                                    </p>
+                                @endif
+
                                 <button wire:click="pay({{ $r->id }})"
                                         class="w-full md:w-auto bg-lime-400 text-black px-6 py-3 rounded-xl font-black hover:bg-lime-300 transition">
                                     Pagar

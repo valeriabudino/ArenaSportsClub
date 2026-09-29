@@ -41,6 +41,8 @@ new class extends Component {
             return redirect()->route('login');
         }
 
+        Turn::releaseExpiredReservations();
+
         $turn = DB::transaction(function () use ($turnId) {
             $turn = Turn::where('id', $turnId)
                 ->where('court_id', $this->court->id)
@@ -55,6 +57,7 @@ new class extends Component {
             $turn->update([
                 'user_id' => auth()->id(),
                 'status' => 'pending_payment',
+                'reserved_until' => now()->addMinutes(Turn::PAYMENT_WINDOW_MINUTES),
             ]);
 
             return $turn;
@@ -151,6 +154,8 @@ new class extends Component {
 
     public function with(): array
     {
+        Turn::releaseExpiredReservations();
+
         return [
             'turns' => Turn::where('court_id', $this->court->id)
                 ->where('date', $this->selectedDate)

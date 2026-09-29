@@ -33,12 +33,12 @@ class AdminDashboardTest extends TestCase
         $this->user = User::factory()->create();
     }
 
-    private function turn(string $date, string $status): Turn
+    private function turn(string $date, string $status, array $attributes = []): Turn
     {
         // Cada turno en un horario distinto, por el indice unico cancha+fecha+hora.
         $start = sprintf('%02d:00', $this->hour++);
 
-        return Turn::withoutEvents(fn () => Turn::create([
+        return Turn::withoutEvents(fn () => Turn::create(array_merge([
             'court_id' => $this->court->id,
             'user_id' => $status === 'available' ? null : $this->user->id,
             'date' => $date,
@@ -46,7 +46,7 @@ class AdminDashboardTest extends TestCase
             'end_time' => $start,
             'price' => 1000,
             'status' => $status,
-        ]));
+        ], $attributes)));
     }
 
     private function payment(string $status, int $amount, $createdAt = null): void
@@ -73,8 +73,9 @@ class AdminDashboardTest extends TestCase
         $this->turn(today()->addDays(3)->toDateString(), 'booked');
         $this->turn(today()->subDay()->toDateString(), 'booked');
 
-        // Pagos pendientes: solo desde hoy.
-        $this->turn(today()->addDay()->toDateString(), 'pending_payment');
+        // Pagos pendientes: solo los que siguen dentro del plazo para pagar.
+        $this->turn(today()->addDay()->toDateString(), 'pending_payment', ['reserved_until' => now()->addMinutes(10)]);
+        $this->turn(today()->addDay()->toDateString(), 'pending_payment', ['reserved_until' => now()->subMinute()]);
         $this->turn(today()->subMonth()->toDateString(), 'pending_payment');
 
         // Ingresos del mes: approved + cancelled_no_refund de este mes.
