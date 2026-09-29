@@ -1,6 +1,8 @@
 <?php
 
 use App\Models\User;
+use App\Rules\ArgentineMobile;
+use App\Support\ArgentinePhone;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -20,10 +22,11 @@ new #[Layout('layouts.guest')] class extends Component {
         $validated = $this->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:' . User::class],
-            'phone' => ['required', 'string', 'max:20'],
+            'phone' => ['required', 'string', 'max:30', new ArgentineMobile],
             'password' => ['required', 'string', 'confirmed', Rules\Password::defaults()],
         ]);
 
+        $validated['phone'] = ArgentinePhone::normalize($validated['phone']);
         $validated['password'] = Hash::make($validated['password']);
 
         event(new Registered(($user = User::create($validated))));
@@ -142,7 +145,7 @@ new #[Layout('layouts.guest')] class extends Component {
                         wire:model="phone"
                         type="tel"
                         required
-                        placeholder="+54 370 000 0000"
+                        placeholder="Ej: 370 4123456"
                         class="mt-2 w-full rounded-xl border-gray-300 focus:border-lime-400 focus:ring-lime-400"
                     >
 

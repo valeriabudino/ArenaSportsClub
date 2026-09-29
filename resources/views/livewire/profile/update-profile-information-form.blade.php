@@ -1,6 +1,8 @@
 <?php
 
 use App\Models\User;
+use App\Rules\ArgentineMobile;
+use App\Support\ArgentinePhone;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Validation\Rule;
@@ -32,8 +34,11 @@ new class extends Component
         $validated = $this->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', Rule::unique(User::class)->ignore($user->id)],
-            'phone' => ['nullable', 'string', 'max:20'],
+            'phone' => ['nullable', 'string', 'max:30', new ArgentineMobile],
         ]);
+
+        $validated['phone'] = ArgentinePhone::normalize($validated['phone']);
+        $this->phone = $validated['phone'] ?? '';
 
         $user->fill($validated);
 
@@ -138,6 +143,7 @@ new class extends Component
                 id="phone"
                 name="phone"
                 type="tel"
+                placeholder="Ej: 370 4123456"
                 autocomplete="tel"
                 class="mt-2 w-full rounded-xl border-gray-300 focus:border-lime-400 focus:ring-lime-400"
             >

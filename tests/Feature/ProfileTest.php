@@ -62,7 +62,8 @@ class ProfileTest extends TestCase
             ->assertHasNoErrors()
             ->assertNoRedirect();
 
-        $this->assertSame('5493718681502', $user->refresh()->phone);
+        // Se guarda en el formato que exige WhatsApp (ver ArgentinePhone).
+        $this->assertSame('+5493718681502', $user->refresh()->phone);
     }
 
     public function test_email_verification_status_is_unchanged_when_the_email_address_is_unchanged(): void
