@@ -1,3 +1,12 @@
+@php
+    // Datos reales (antes eran numeros fijos). La calificacion muestra "Nuevo"
+    // mientras no haya ninguna resena, en vez de un 0.
+    $clients = \App\Models\User::where('role', '!=', 'admin')->count();
+    $courts = \App\Models\Court::where('is_active', true)->count();
+    $bookings = \App\Models\Turn::where('status', 'booked')->count();
+    $rating = \App\Models\CourtReview::avg('rating');
+@endphp
+
 <section class="bg-[#f5f5f5] pb-20">
     <div class="max-w-7xl mx-auto px-6 lg:px-8">
 
@@ -10,9 +19,9 @@
                 </svg>
 
                 <div>
-                    <h3 class="text-4xl font-black">+1200</h3>
+                    <h3 class="text-4xl font-black">{{ $clients }}</h3>
                     <p class="text-sm text-white/70">
-                        Clientes felices
+                        Clientes registrados
                     </p>
                 </div>
             </div>
@@ -25,7 +34,7 @@
                 </svg>
 
                 <div>
-                    <h3 class="text-4xl font-black">12</h3>
+                    <h3 class="text-4xl font-black">{{ $courts }}</h3>
                     <p class="text-sm text-white/70">
                         Canchas disponibles
                     </p>
@@ -40,7 +49,7 @@
                 </svg>
 
                 <div>
-                    <h3 class="text-4xl font-black">+4500</h3>
+                    <h3 class="text-4xl font-black">{{ $bookings }}</h3>
                     <p class="text-sm text-white/70">
                         Reservas realizadas
                     </p>
@@ -54,7 +63,7 @@
                 </svg>
 
                 <div>
-                    <h3 class="text-4xl font-black">4.8</h3>
+                    <h3 class="text-4xl font-black">{{ $rating ? number_format($rating, 1, ',', '.') : 'Nuevo' }}</h3>
                     <p class="text-sm text-white/70">
                         Calificación promedio
                     </p>
