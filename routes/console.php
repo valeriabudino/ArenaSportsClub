@@ -10,6 +10,7 @@ Artisan::command('inspire', function () {
 
 Schedule::command('turnos:recordatorio')->hourly();
 Schedule::command('accesos:sincronizar')->hourly();
+Schedule::command('turnos:liberar-vencidos')->everyFiveMinutes();
 
 // PENDIENTE PARA EL DEPLOY: 'turns:generate' no esta agendado. Correrlo
 // a mano al menos una vez en el hosting (php artisan turns:generate), o

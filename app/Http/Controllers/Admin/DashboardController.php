@@ -18,13 +18,13 @@ class DashboardController extends Controller
 
     public function __invoke()
     {
+        Turn::releaseExpiredReservations();
+
         $today = today()->toDateString();
 
         return view('pages.admin.dashboard', [
             'todayBookings' => Turn::where('status', 'booked')->where('date', $today)->count(),
             'upcomingBookings' => Turn::where('status', 'booked')->where('date', '>=', $today)->count(),
-            // Solo desde hoy: las reservas pendientes de pago todavia no vencen solas,
-            // asi que las viejas quedarian contando para siempre.
             'pendingPayments' => Turn::where('status', 'pending_payment')->where('date', '>=', $today)->count(),
             'monthIncome' => Payment::whereIn('status', self::INCOME_STATUSES)
                 ->whereBetween('created_at', [now()->startOfMonth(), now()->endOfMonth()])

@@ -14,6 +14,8 @@ new #[Layout('layouts.admin')] class extends Component {
 
     public function with(): array
     {
+        Turn::releaseExpiredReservations();
+
         return [
             'turns' => Turn::with('court.sport')->when($this->search, fn($q) => $q->whereHas('court', fn($q) => $q->where('name', 'like', "%{$this->search}%")))->when($this->statusFilter, fn($q) => $q->where('status', $this->statusFilter))->when($this->dateFilter, fn($q) => $q->where('date', $this->dateFilter))->orderBy('date')->orderBy('start_time')->paginate(20),
         ];

@@ -31,30 +31,7 @@ class MercadoPagoService
             'status' => 'pending',
         ]);
 
-        $client = new PreferenceClient();
-
-$preference = $client->create([
-    "items" => [
-        [
-            "title" => "Turno {$turn->court->name} - {$turn->date} {$turn->start_time}",
-            "quantity" => 1,
-            "unit_price" => (float) $turn->price,
-            "currency_id" => "ARS",
-        ]
-    ],
-
-    "external_reference" => (string) $payment->id,
-
-    "notification_url" =>
-        config('services.mercadopago.webhook_url')
-        ?: route('webhooks.mercadopago'),
-
-    "back_urls" => [
-        "success" => route('payments.success'),
-        "pending" => route('payments.pending'),
-        "failure" => route('payments.failure'),
-    ],
-]);
+        $preference = (new PreferenceClient())->create($this->preferenceData($turn, $payment));
 
         $payment->update(['mp_preference_id' => $preference->id]);
 
@@ -64,6 +41,41 @@ $preference = $client->create([
             // sostener; init_point ya sirve la experiencia de prueba o de
             // produccion segun las credenciales usadas para crear la preferencia.
             'checkout_url' => $preference->init_point,
+        ];
+    }
+
+    /**
+     * Datos de la preferencia de Checkout Pro. La preferencia vence junto con
+     * la reserva del turno, asi Mercado Pago no deja pagar un turno que ya se
+     * libero para otro usuario.
+     */
+    public function preferenceData(Turn $turn, Payment $payment): array
+    {
+        $expiresAt = $turn->reserved_until ?? now()->addMinutes(Turn::PAYMENT_WINDOW_MINUTES);
+
+        return [
+            'items' => [
+                [
+                    'title' => "Turno {$turn->court->name} - {$turn->date} {$turn->start_time}",
+                    'quantity' => 1,
+                    'unit_price' => (float) $turn->price,
+                    'currency_id' => 'ARS',
+                ],
+            ],
+
+            'external_reference' => (string) $payment->id,
+
+            'notification_url' => config('services.mercadopago.webhook_url')
+                ?: route('webhooks.mercadopago'),
+
+            'back_urls' => [
+                'success' => route('payments.success'),
+                'pending' => route('payments.pending'),
+                'failure' => route('payments.failure'),
+            ],
+
+            'expires' => true,
+            'expiration_date_to' => $expiresAt->format('Y-m-d\TH:i:s.vP'),
         ];
     }
 }
