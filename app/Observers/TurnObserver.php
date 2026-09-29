@@ -13,6 +13,20 @@ class TurnObserver
 {
     public function __construct(private readonly WhatsAppSenderInterface $whatsApp) {}
 
+    /**
+     * Cuando un turno vuelve a estar disponible (cancelacion, pago rechazado,
+     * vencimiento, etc.) se le borran el QR y la marca de recordatorio. Si no,
+     * el proximo que lo reserve heredaria el QR del anterior (que seguiria
+     * entrando con el) y no recibiria ni la confirmacion ni el recordatorio.
+     */
+    public function updating(Turn $turn): void
+    {
+        if ($turn->isDirty('status') && $turn->status === 'available') {
+            $turn->qr_code = null;
+            $turn->reminder_sent_at = null;
+        }
+    }
+
     public function updated(Turn $turn): void
     {
         if (! $turn->wasChanged('status') || $turn->status !== 'booked' || $turn->qr_code) {
