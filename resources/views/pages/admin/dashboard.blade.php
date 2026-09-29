@@ -18,7 +18,7 @@
         $cards = [
             ['label' => 'Reservas de hoy', 'value' => $todayBookings, 'hint' => 'Turnos confirmados para hoy', 'route' => 'admin.turns.index', 'icon' => 'calendar'],
             ['label' => 'Próximas reservas', 'value' => $upcomingBookings, 'hint' => 'Confirmadas de hoy en adelante', 'route' => 'admin.turns.index', 'icon' => 'clock'],
-            ['label' => 'Ingresos del mes', 'value' => $money($monthIncome), 'hint' => 'Pagos aprobados de ' . now()->translatedFormat('F'), 'route' => 'admin.turns.index', 'icon' => 'money', 'highlight' => true],
+            ['label' => 'Ingresos (30 días)', 'value' => $money($recentIncome), 'hint' => 'Pagos aprobados de los últimos 30 días', 'route' => 'admin.turns.index', 'icon' => 'money', 'highlight' => true],
             ['label' => 'Pagos pendientes', 'value' => $pendingPayments, 'hint' => 'Reservas esperando el pago en Mercado Pago', 'route' => 'admin.turns.index', 'icon' => 'card'],
             ['label' => 'Reembolsos pendientes', 'value' => $pendingRefunds, 'hint' => 'Cancelaciones a devolver', 'route' => 'admin.refunds', 'icon' => 'refund', 'warn' => $pendingRefunds > 0],
             ['label' => 'Canchas activas', 'value' => $activeCourts, 'hint' => 'Disponibles para reservar', 'route' => 'admin.courts', 'icon' => 'courts'],

@@ -31,7 +31,7 @@
             <div class="flex gap-8 overflow-x-auto pb-6 snap-x snap-mandatory">
                 @foreach ($courts as $court)
                     <article
-                        class="min-w-[320px] md:min-w-[360px] bg-white rounded-3xl overflow-hidden shadow-lg hover:-translate-y-2 transition duration-300 snap-start">
+                        class="min-w-[320px] md:min-w-[360px] bg-white rounded-3xl overflow-hidden border border-gray-200 shadow-lg hover:-translate-y-2 hover:border-lime-400 hover:shadow-xl transition duration-300 snap-start">
                         @if ($court->image)
                             <img src="{{ asset('storage/' . $court->image) }}" alt="{{ $court->name }}"
                                 class="h-56 w-full object-cover">
@@ -108,7 +108,7 @@
                 @endforeach
             </div>
         @else
-            <div class="bg-white rounded-3xl p-10 text-center shadow">
+            <div class="bg-white rounded-3xl p-10 text-center border border-gray-200 shadow">
                 <h3 class="text-2xl font-black">Todavía no hay canchas cargadas</h3>
                 <p class="text-gray-500 mt-3">
                     Cuando el administrador registre canchas activas, aparecerán acá.

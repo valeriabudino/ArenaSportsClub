@@ -26,8 +26,9 @@ class DashboardController extends Controller
             'todayBookings' => Turn::where('status', 'booked')->where('date', $today)->count(),
             'upcomingBookings' => Turn::where('status', 'booked')->where('date', '>=', $today)->count(),
             'pendingPayments' => Turn::where('status', 'pending_payment')->where('date', '>=', $today)->count(),
-            'monthIncome' => Payment::whereIn('status', self::INCOME_STATUSES)
-                ->whereBetween('created_at', [now()->startOfMonth(), now()->endOfMonth()])
+            // Ultimos 30 dias y no "mes actual": asi no queda en $0 a principio de mes.
+            'recentIncome' => Payment::whereIn('status', self::INCOME_STATUSES)
+                ->where('created_at', '>=', now()->subDays(30))
                 ->sum('amount'),
             'activeCourts' => Court::where('is_active', true)->count(),
             'pendingRefunds' => Payment::where('status', 'refund_pending')->count(),
