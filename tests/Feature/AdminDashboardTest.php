@@ -78,10 +78,10 @@ class AdminDashboardTest extends TestCase
         $this->turn(today()->addDay()->toDateString(), 'pending_payment', ['reserved_until' => now()->subMinute()]);
         $this->turn(today()->subMonth()->toDateString(), 'pending_payment');
 
-        // Ingresos del mes: approved + cancelled_no_refund de este mes.
+        // Ingresos de los ultimos 30 dias: approved + cancelled_no_refund.
         $this->payment('approved', 25000);
         $this->payment('cancelled_no_refund', 5000);
-        $this->payment('approved', 99000, now()->subMonthNoOverflow()); // mes anterior
+        $this->payment('approved', 99000, now()->subDays(40)); // fuera de los 30 dias
         $this->payment('rejected', 7000);
         $this->payment('refund_pending', 3000);
         $this->payment('refunded', 4000);
@@ -98,7 +98,7 @@ class AdminDashboardTest extends TestCase
             ->assertViewHas('todayBookings', 2)
             ->assertViewHas('upcomingBookings', 3)
             ->assertViewHas('pendingPayments', 1)
-            ->assertViewHas('monthIncome', 30000)
+            ->assertViewHas('recentIncome', 30000)
             ->assertViewHas('activeCourts', 2)
             ->assertViewHas('pendingRefunds', 1)
             ->assertSee('$30.000');
