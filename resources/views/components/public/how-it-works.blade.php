@@ -19,7 +19,7 @@
 
 
             {{-- Paso 1 --}}
-            <div class="relative bg-white rounded-3xl p-8 text-center shadow-lg">
+            <div class="relative bg-white rounded-3xl p-8 text-center border border-gray-200 shadow-lg hover:border-lime-400 hover:shadow-xl transition duration-300">
 
                 <div class="mx-auto -mt-14 mb-5 h-16 w-16 rounded-full bg-[#07110d] flex items-center justify-center text-lime-400">
 
@@ -44,7 +44,7 @@
 
 
             {{-- Paso 2 --}}
-            <div class="relative bg-white rounded-3xl p-8 text-center shadow-lg">
+            <div class="relative bg-white rounded-3xl p-8 text-center border border-gray-200 shadow-lg hover:border-lime-400 hover:shadow-xl transition duration-300">
 
                 <div class="mx-auto -mt-14 mb-5 h-16 w-16 rounded-full bg-[#07110d] flex items-center justify-center text-lime-400">
 
@@ -70,7 +70,7 @@
 
 
             {{-- Paso 3 --}}
-            <div class="relative bg-white rounded-3xl p-8 text-center shadow-lg">
+            <div class="relative bg-white rounded-3xl p-8 text-center border border-gray-200 shadow-lg hover:border-lime-400 hover:shadow-xl transition duration-300">
 
                 <div class="mx-auto -mt-14 mb-5 h-16 w-16 rounded-full bg-[#07110d] flex items-center justify-center text-lime-400">
 
@@ -96,7 +96,7 @@
 
 
             {{-- Paso 4 --}}
-            <div class="relative bg-white rounded-3xl p-8 text-center shadow-lg">
+            <div class="relative bg-white rounded-3xl p-8 text-center border border-gray-200 shadow-lg hover:border-lime-400 hover:shadow-xl transition duration-300">
 
                 <div class="mx-auto -mt-14 mb-5 h-16 w-16 rounded-full bg-[#07110d] flex items-center justify-center text-lime-400">
 
