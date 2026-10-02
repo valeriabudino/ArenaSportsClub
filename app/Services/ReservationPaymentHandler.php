@@ -49,6 +49,15 @@ class ReservationPaymentHandler
             'mp_payment_id' => $mpPaymentId,
             'status' => $mpStatus,
         ], fn ($value) => $value !== null));
+
+        // Cada "Pagar" crea un pago pendiente; si uno se aprobo y el turno quedo
+        // reservado, los demas del mismo turno ya no se van a usar.
+        if ($mpStatus === 'approved') {
+            Payment::where('turn_id', $turn->id)
+                ->where('id', '!=', $payment->id)
+                ->where('status', 'pending')
+                ->update(['status' => 'expired']);
+        }
     }
 
     private function isPast($turn): bool

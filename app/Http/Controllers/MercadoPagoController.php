@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Payment;
 use App\Services\ReservationPaymentHandler;
+use App\Support\MercadoPagoNotification;
 use Illuminate\Http\Request;
 use MercadoPago\Client\Payment\PaymentClient;
 use MercadoPago\MercadoPagoConfig;
@@ -12,10 +13,9 @@ class MercadoPagoController extends Controller
 {
     public function webhook(Request $request)
     {
-        $topic = $request->input('topic', $request->input('type'));
-        $paymentId = $request->input('id') ?? data_get($request->input('data'), 'id') ?? $request->query('id');
+        $paymentId = MercadoPagoNotification::paymentId($request);
 
-        if ($topic !== 'payment' || ! $paymentId) {
+        if (! MercadoPagoNotification::isPayment($request) || ! $paymentId) {
             return response()->json(['ignored' => true]);
         }
 
