@@ -37,3 +37,43 @@ html {
 .scrollbar-panel:hover::-webkit-scrollbar-thumb {
     background: rgb(163 230 53 / 0.6);
 }
+
+/*
+ * Botones verdes (primarios). En vez de tocar las ~30 vistas que usan
+ * "bg-lime-400" en <a> y <button>, se les da relieve desde aca: degradado,
+ * borde inferior oscuro, sombra verde y animacion al pasar el mouse y al apretar.
+ * Los <div>/<span> verdes (insignias, iconos, la card de la promo) no se
+ * tocan, y el link activo del menu del admin (aria-current) queda plano.
+ */
+:is(a, button).bg-lime-400:not([aria-current]) {
+    background-image: linear-gradient(180deg, #a3e635 0%, #84cc16 100%);
+    box-shadow:
+        inset 0 -3px 0 rgb(63 98 18 / 0.35),
+        0 8px 20px -8px rgb(132 204 22 / 0.75);
+    transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
+}
+
+:is(a, button).bg-lime-400:not([aria-current]):hover {
+    transform: translateY(-2px);
+    filter: brightness(1.08);
+    box-shadow:
+        inset 0 -3px 0 rgb(63 98 18 / 0.35),
+        0 14px 28px -10px rgb(132 204 22 / 0.9);
+}
+
+:is(a, button).bg-lime-400:not([aria-current]):active {
+    transform: translateY(1px);
+    filter: brightness(0.97);
+    box-shadow: inset 0 -1px 0 rgb(63 98 18 / 0.35), 0 4px 10px -6px rgb(132 204 22 / 0.6);
+}
+
+:is(a, button).bg-lime-400:not([aria-current]):focus-visible {
+    outline: 3px solid rgb(163 230 53 / 0.6);
+    outline-offset: 2px;
+}
+
+:is(a, button).bg-lime-400:not([aria-current]):disabled {
+    transform: none;
+    filter: none;
+    box-shadow: none;
+}
