@@ -37,6 +37,13 @@
                 <div
                     class="absolute right-0 top-full pt-2 w-48 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition">
                     <div class="bg-white rounded-xl shadow-xl overflow-hidden">
+                        @if (auth()->user()->isAdmin())
+                            <a href="{{ route('admin.dashboard') }}"
+                                class="block px-5 py-3 text-sm font-black text-lime-700 bg-lime-50 hover:bg-lime-100 border-b border-gray-100">
+                                Panel de administración
+                            </a>
+                        @endif
+
                         <a href="{{ route('reservations.index') }}"
                             class="block px-5 py-3 text-sm font-bold text-gray-700 hover:bg-lime-50">
                             Mis reservas
@@ -91,6 +98,9 @@
             @endguest
 
             @auth
+                @if (auth()->user()->isAdmin())
+                    <a href="{{ route('admin.dashboard') }}" class="px-6 py-4 font-black text-lime-400 hover:bg-white/5 transition">Panel de administración</a>
+                @endif
                 <a href="{{ route('reservations.index') }}" class="px-6 py-4 hover:bg-white/5 hover:text-lime-400 transition">Mis reservas</a>
                 <a href="{{ route('profile') }}" class="px-6 py-4 hover:bg-white/5 hover:text-lime-400 transition">Mi perfil</a>
                 <form method="POST" action="{{ route('logout') }}">
