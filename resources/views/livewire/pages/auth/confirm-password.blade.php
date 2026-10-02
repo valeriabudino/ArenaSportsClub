@@ -33,30 +33,21 @@ new #[Layout('layouts.guest')] class extends Component
     }
 }; ?>
 
-<div>
-    <div class="mb-4 text-sm text-gray-600">
-        {{ __('This is a secure area of the application. Please confirm your password before continuing.') }}
-    </div>
+<x-auth.card
+    eyebrow="Zona segura"
+    title="Confirmá tu contraseña"
+    subtitle="Por seguridad, ingresá tu contraseña antes de continuar."
+    side-title="Tu cuenta, protegida"
+    side-text="Te pedimos la contraseña antes de acciones importantes.">
 
-    <form wire:submit="confirmPassword">
-        <!-- Password -->
-        <div>
-            <x-input-label for="password" :value="__('Password')" />
+    <form wire:submit="confirmPassword" class="space-y-5">
+        <x-auth.password-input wire:model="password" id="password" label="Contraseña"
+            placeholder="Ingresá tu contraseña" autocomplete="current-password" autofocus error="password" />
 
-            <x-text-input wire:model="password"
-                          id="password"
-                          class="block mt-1 w-full"
-                          type="password"
-                          name="password"
-                          required autocomplete="current-password" />
-
-            <x-input-error :messages="$errors->get('password')" class="mt-2" />
-        </div>
-
-        <div class="flex justify-end mt-4">
-            <x-primary-button>
-                {{ __('Confirm') }}
-            </x-primary-button>
-        </div>
+        <button type="submit" wire:loading.attr="disabled"
+            class="w-full bg-lime-400 text-black py-3 rounded-xl font-black uppercase hover:bg-lime-300 transition disabled:opacity-60 disabled:cursor-not-allowed">
+            <span wire:loading.remove wire:target="confirmPassword">Confirmar</span>
+            <span wire:loading wire:target="confirmPassword">Confirmando...</span>
+        </button>
     </form>
-</div>
+</x-auth.card>

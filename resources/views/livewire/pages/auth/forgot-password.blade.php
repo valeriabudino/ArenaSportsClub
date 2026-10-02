@@ -24,7 +24,9 @@ new #[Layout('layouts.guest')] class extends Component
             $this->only('email')
         );
 
-        if ($status != Password::RESET_LINK_SENT) {
+        // Si el email no existe se muestra lo mismo que si se envio, para no
+        // revelar que emails tienen cuenta.
+        if (! in_array($status, [Password::RESET_LINK_SENT, Password::INVALID_USER])) {
             $this->addError('email', __($status));
 
             return;
@@ -32,30 +34,38 @@ new #[Layout('layouts.guest')] class extends Component
 
         $this->reset('email');
 
-        session()->flash('status', __($status));
+        session()->flash('status', __(Password::RESET_LINK_SENT));
     }
 }; ?>
 
-<div>
-    <div class="mb-4 text-sm text-gray-600">
-        {{ __('Forgot your password? No problem. Just let us know your email address and we will email you a password reset link that will allow you to choose a new one.') }}
-    </div>
+<x-auth.card
+    eyebrow="Recuperar acceso"
+    title="Olvidé mi contraseña"
+    subtitle="Ingresá el email de tu cuenta y te mandamos un link para elegir una contraseña nueva."
+    side-title="Volvé a la cancha en un minuto"
+    side-text="Recuperá el acceso a tu cuenta y seguí reservando tus turnos."
+    :back-url="route('login')"
+    back-text="Volver a iniciar sesión">
 
-    <!-- Session Status -->
-    <x-auth-session-status class="mb-4" :status="session('status')" />
+    <x-auth-session-status class="mb-4 rounded-xl bg-lime-50 border border-lime-200 px-4 py-3 text-lime-800" :status="session('status')" />
 
-    <form wire:submit="sendPasswordResetLink">
-        <!-- Email Address -->
+    <form wire:submit="sendPasswordResetLink" class="space-y-5">
         <div>
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input wire:model="email" id="email" class="block mt-1 w-full" type="email" name="email" required autofocus />
+            <label for="email" class="font-bold text-sm text-gray-700">
+                Email
+            </label>
+
+            <input wire:model="email" id="email" type="email" required autofocus autocomplete="username"
+                placeholder="tuemail@ejemplo.com"
+                class="mt-2 w-full rounded-xl border-gray-300 focus:border-lime-400 focus:ring-lime-400">
+
             <x-input-error :messages="$errors->get('email')" class="mt-2" />
         </div>
 
-        <div class="flex items-center justify-end mt-4">
-            <x-primary-button>
-                {{ __('Email Password Reset Link') }}
-            </x-primary-button>
-        </div>
+        <button type="submit" wire:loading.attr="disabled"
+            class="w-full bg-lime-400 text-black py-3 rounded-xl font-black uppercase hover:bg-lime-300 transition disabled:opacity-60 disabled:cursor-not-allowed">
+            <span wire:loading.remove wire:target="sendPasswordResetLink">Enviar link</span>
+            <span wire:loading wire:target="sendPasswordResetLink">Enviando...</span>
+        </button>
     </form>
-</div>
+</x-auth.card>
