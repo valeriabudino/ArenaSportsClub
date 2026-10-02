@@ -69,37 +69,37 @@ new #[Layout('layouts.guest')] class extends Component
     }
 }; ?>
 
-<div>
-    <form wire:submit="resetPassword">
-        <!-- Email Address -->
+<x-auth.card
+    eyebrow="Recuperar acceso"
+    title="Contraseña nueva"
+    subtitle="Elegí una contraseña nueva para tu cuenta."
+    side-title="Volvé a la cancha en un minuto"
+    side-text="Con tu contraseña nueva ya podés seguir reservando tus turnos."
+    :back-url="route('login')"
+    back-text="Volver a iniciar sesión">
+
+    <form wire:submit="resetPassword" class="space-y-5">
         <div>
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input wire:model="email" id="email" class="block mt-1 w-full" type="email" name="email" required autofocus autocomplete="username" />
+            <label for="email" class="font-bold text-sm text-gray-700">
+                Email
+            </label>
+
+            <input wire:model="email" id="email" type="email" required autocomplete="username"
+                class="mt-2 w-full rounded-xl border-gray-300 focus:border-lime-400 focus:ring-lime-400">
+
             <x-input-error :messages="$errors->get('email')" class="mt-2" />
         </div>
 
-        <!-- Password -->
-        <div class="mt-4">
-            <x-input-label for="password" :value="__('Password')" />
-            <x-text-input wire:model="password" id="password" class="block mt-1 w-full" type="password" name="password" required autocomplete="new-password" />
-            <x-input-error :messages="$errors->get('password')" class="mt-2" />
-        </div>
+        <x-auth.password-input wire:model="password" id="password" label="Contraseña nueva"
+            placeholder="Mínimo 8 caracteres" autocomplete="new-password" autofocus error="password" />
 
-        <!-- Confirm Password -->
-        <div class="mt-4">
-            <x-input-label for="password_confirmation" :value="__('Confirm Password')" />
+        <x-auth.password-input wire:model="password_confirmation" id="password_confirmation" label="Repetí la contraseña"
+            placeholder="Escribila de nuevo" autocomplete="new-password" error="password_confirmation" />
 
-            <x-text-input wire:model="password_confirmation" id="password_confirmation" class="block mt-1 w-full"
-                          type="password"
-                          name="password_confirmation" required autocomplete="new-password" />
-
-            <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
-        </div>
-
-        <div class="flex items-center justify-end mt-4">
-            <x-primary-button>
-                {{ __('Reset Password') }}
-            </x-primary-button>
-        </div>
+        <button type="submit" wire:loading.attr="disabled"
+            class="w-full bg-lime-400 text-black py-3 rounded-xl font-black uppercase hover:bg-lime-300 transition disabled:opacity-60 disabled:cursor-not-allowed">
+            <span wire:loading.remove wire:target="resetPassword">Guardar contraseña</span>
+            <span wire:loading wire:target="resetPassword">Guardando...</span>
+        </button>
     </form>
-</div>
+</x-auth.card>

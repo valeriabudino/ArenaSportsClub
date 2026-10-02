@@ -35,24 +35,29 @@ new #[Layout('layouts.guest')] class extends Component
     }
 }; ?>
 
-<div>
-    <div class="mb-4 text-sm text-gray-600">
-        {{ __('Thanks for signing up! Before getting started, could you verify your email address by clicking on the link we just emailed to you? If you didn\'t receive the email, we will gladly send you another.') }}
-    </div>
+<x-auth.card
+    eyebrow="Último paso"
+    title="Verificá tu email"
+    subtitle="Te mandamos un link a tu email para confirmar tu cuenta. Si no te llegó, te mandamos otro."
+    side-title="Ya casi estás"
+    side-text="Verificá tu email y empezá a reservar tus turnos.">
 
     @if (session('status') == 'verification-link-sent')
-        <div class="mb-4 font-medium text-sm text-green-600">
-            {{ __('A new verification link has been sent to the email address you provided during registration.') }}
+        <div class="mb-5 rounded-xl bg-lime-50 border border-lime-200 px-4 py-3 text-sm font-bold text-lime-800">
+            Te mandamos un link nuevo al email con el que te registraste.
         </div>
     @endif
 
-    <div class="mt-4 flex items-center justify-between">
-        <x-primary-button wire:click="sendVerification">
-            {{ __('Resend Verification Email') }}
-        </x-primary-button>
+    <div class="space-y-4">
+        <button type="button" wire:click="sendVerification" wire:loading.attr="disabled"
+            class="w-full bg-lime-400 text-black py-3 rounded-xl font-black uppercase hover:bg-lime-300 transition disabled:opacity-60 disabled:cursor-not-allowed">
+            <span wire:loading.remove wire:target="sendVerification">Reenviar email</span>
+            <span wire:loading wire:target="sendVerification">Enviando...</span>
+        </button>
 
-        <button wire:click="logout" type="submit" class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-            {{ __('Log Out') }}
+        <button type="button" wire:click="logout"
+            class="w-full py-3 rounded-xl font-black uppercase border border-gray-300 text-[#07110d] hover:bg-gray-100 transition">
+            Cerrar sesión
         </button>
     </div>
-</div>
+</x-auth.card>
